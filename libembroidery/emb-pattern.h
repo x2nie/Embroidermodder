@@ -11,6 +11,7 @@
 extern "C" {
 #endif
 
+#include "emb-shape.h"
 #include "emb-arc.h"
 #include "emb-circle.h"
 #include "emb-ellipse.h"
@@ -32,6 +33,8 @@ typedef struct EmbPattern_
     EmbHoop hoop;
     EmbStitchList* stitchList;
     EmbThreadList* threadList;
+
+    EmbShapeObjectList* shapeObjList;
 
     EmbArcObjectList* arcObjList;
     EmbCircleObjectList* circleObjList;

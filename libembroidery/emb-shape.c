@@ -35,19 +35,27 @@ EmbShapeObjectList* embShapeObjectList_create(EmbShapeObject* data)
     EmbShapeObjectList* heapShapeObjList = (EmbShapeObjectList*)malloc(sizeof(EmbShapeObjectList));
     if(!heapShapeObjList) { embLog_error("emb-shape.c embShapeObjectList_create(), cannot allocate memory for heapShapeObjList\n"); return 0; }
     heapShapeObjList->shapeObj = data;
+#ifdef EMBSHAPES_PREV
+    heapShapeObjList->prev = 0;
+#endif
     heapShapeObjList->next = 0;
     return heapShapeObjList;
 }
 
 EmbShapeObjectList* embShapeObjectList_add(EmbShapeObjectList* pointer, EmbShapeObject* data)
 {
+    EmbShapeObjectList* incoming;
     if(!pointer) { embLog_error("emb-shape.c embShapeObjectList_add(), pointer argument is null\n"); return 0; }
-    pointer->next = (EmbShapeObjectList*)malloc(sizeof(EmbShapeObjectList));
-    if(!pointer->next) { embLog_error("emb-shape.c embShapeObjectList_add(), cannot allocate memory for pointer->next\n"); return 0; }
-    pointer = pointer->next;
-    pointer->shapeObj = data;
-    pointer->next = 0;
-    return pointer;
+
+    incoming  = (EmbShapeObjectList*)malloc(sizeof(EmbShapeObjectList));
+    if(!incoming) { embLog_error("emb-shape.c embShapeObjectList_add(), cannot allocate memory for pointer->next\n"); return 0; }
+    pointer->next = incoming;
+#ifdef EMBSHAPES_PREV
+    incoming->prev = pointer;
+#endif
+    incoming->shapeObj = data;
+    incoming->next = 0;
+    return incoming;
 }
 
 int embShapeObjectList_count(EmbShapeObjectList* pointer)
@@ -75,6 +83,12 @@ void embShapeObjectList_free(EmbShapeObjectList* pointer)
     EmbShapeObjectList* nextPointer = 0;
     while(tempPointer)
     {
+#ifdef EMBSHAPES_PREV
+        if(tempPointer->prev) {
+            tempPointer->prev->next = 0;
+            tempPointer->prev = 0;
+        }
+#endif
         nextPointer = tempPointer->next;
         embShapeObject_free(tempPointer->shapeObj);
         tempPointer->shapeObj = 0;

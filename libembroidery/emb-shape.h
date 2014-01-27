@@ -1,6 +1,8 @@
 #ifndef EMBSHAPE_H
 #define EMBSHAPE_H
 
+/* #define EMBSHAPES_PREV */
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -22,10 +24,17 @@ extern "C" {
 #define QUADTOCONTROL    256
 #define QUADTOEND        512*/
 
+typedef struct EmbShapeObjectList_ EmbShapeObjectList_;
 typedef struct EmbShapeObject_
 {
     char kind;
+
     EmbPointList* pointList;
+    /* similar approach :
+    double* d;
+    int size_d;     */
+
+    struct EmbShapeObjectList_* child;
 
     /* Properties */
     int lineType;
@@ -38,6 +47,9 @@ void embShapeObject_free(EmbShapeObject* pointer);
 typedef struct EmbShapeObjectList_
 {
     EmbShapeObject* shapeObj;
+#ifdef EMBSHAPES_PREV
+    struct EmbShapeObjectList_* prev;
+#endif
     struct EmbShapeObjectList_* next;
 } EmbShapeObjectList;
 

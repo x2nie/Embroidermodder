@@ -21,6 +21,8 @@ EmbPattern* embPattern_create(void)
     p->stitchList = 0;
     p->threadList = 0;
 
+    p->shapeObjList = 0;
+
     p->hoop.height = 0.0;
     p->hoop.width = 0.0;
     p->arcObjList = 0;
