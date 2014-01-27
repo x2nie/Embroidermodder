@@ -34,7 +34,6 @@ typedef struct EmbShapeObject_
     double* d;
     int size_d;     */
 
-    struct EmbShapeObjectList_* child;
 
     /* Properties */
     int lineType;
@@ -51,6 +50,8 @@ typedef struct EmbShapeObjectList_
     struct EmbShapeObjectList_* prev;
 #endif
     struct EmbShapeObjectList_* next;
+    struct EmbShapeObjectList_* child;
+
 } EmbShapeObjectList;
 
 EmbShapeObjectList* embShapeObjectList_create(EmbShapeObject* data);

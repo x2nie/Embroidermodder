@@ -50,6 +50,8 @@ typedef struct EmbPattern_
     EmbStitchList* lastStitch;
     EmbThreadList* lastThread;
 
+    EmbShapeObjectList* lastShapeObj;
+
     EmbArcObjectList* lastArcObj;
     EmbCircleObjectList* lastCircleObj;
     EmbEllipseObjectList* lastEllipseObj;
@@ -82,6 +84,8 @@ void embPattern_flip(EmbPattern* p, int horz, int vert);
 void embPattern_correctForMaxStitchLength(EmbPattern* p, double maxStitchLength, double maxJumpLength);
 void embPattern_center(EmbPattern* p);
 void embPattern_loadExternalColorFile(EmbPattern* p, const char* fileName);
+
+void embPattern_addShapeObject(EmbPattern* p, EmbShapeObject* obj);
 
 void embPattern_addCircleObjectAbs(EmbPattern* p, double cx, double cy, double r);
 void embPattern_addEllipseObjectAbs(EmbPattern* p, double cx, double cy, double rx, double ry); /* TODO: ellipse rotation */

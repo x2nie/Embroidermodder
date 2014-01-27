@@ -975,6 +975,25 @@ void embPattern_addPathObjectAbs(EmbPattern* p, EmbPathObject* obj)
         p->lastPathObj = p->lastPathObj->next;
     }
 }
+void embPattern_addShapeObject(EmbPattern* p, EmbShapeObject* obj)
+{
+    if(!p) { embLog_error("emb-pattern.c embPattern_addPathObjectAbs(), p argument is null\n"); return; }
+    if(!obj) { embLog_error("emb-pattern.c embPattern_addPathObjectAbs(), obj argument is null\n"); return; }
+
+    if(!(p->shapeObjList))
+    {
+        p->shapeObjList = embShapeObjectList_create(obj);
+        p->lastShapeObj = p->shapeObjList;
+    }
+    else
+    {
+        embShapeObjectList_add(p->lastShapeObj, obj);
+    }
+    while(p->lastShapeObj->next)
+    {
+        p->lastShapeObj = p->lastShapeObj->next;
+    }
+}
 
 /*! Adds a point object to pattern (\a p) at the absolute position (\a x,\a y). Positive y is up. Units are in millimeters. */
 void embPattern_addPointObjectAbs(EmbPattern* p, double x, double y)
