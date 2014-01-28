@@ -86,6 +86,7 @@ void embPattern_center(EmbPattern* p);
 void embPattern_loadExternalColorFile(EmbPattern* p, const char* fileName);
 
 void embPattern_addShapeObject(EmbPattern* p, EmbShapeObject* obj);
+void embPattern_addShapeObjectList(EmbPattern* p, EmbShapeObjectList* pointer);
 
 void embPattern_addCircleObjectAbs(EmbPattern* p, double cx, double cy, double r);
 void embPattern_addEllipseObjectAbs(EmbPattern* p, double cx, double cy, double rx, double ry); /* TODO: ellipse rotation */

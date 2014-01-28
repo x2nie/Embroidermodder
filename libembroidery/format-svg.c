@@ -425,7 +425,8 @@ void svgAddToPattern(EmbPattern* p)
 
                             if(!rootPathShape )
                             {
-                                rootPathShape = embShapeObject_create('G', NULL,0,0);
+
+                                rootPathShape = embShapeObjectList_create(embShapeObject_create('G', NULL,embColor_make(0,0,0),0));
                                 startOfPointList = embPointList_create(xx, yy);
                                 pathObjPointList = startOfPointList;
 
@@ -434,7 +435,7 @@ void svgAddToPattern(EmbPattern* p)
                                 if (reset > 4)
                                     pathObjPointList = embPointList_add(pathObjPointList, embPoint_make(cx2, cy2));
 
-                                shapeObjList = embShapeObject_create(cmd, startOfPointList,0,0);
+                                shapeObjList = embShapeObjectList_create(embShapeObject_create(cmd, startOfPointList,embColor_make(0,0,0),0));
                                 /*shapeObjList->shapeObj->pointList = startOfPointList;*/
                                 rootPathShape->child = shapeObjList;
 
@@ -449,7 +450,7 @@ void svgAddToPattern(EmbPattern* p)
                                 if (reset > 4)
                                     pathObjPointList = embPointList_add(pathObjPointList, embPoint_make(cx2, cy2));
 
-                                shapeObjList = embShapeObjectList_add(shapeObjList, embShapeObject_create(cmd, startOfPointList,0,0));
+                                shapeObjList = embShapeObjectList_add(shapeObjList, embShapeObject_create(cmd, startOfPointList,embColor_make(0,0,0),0));
                                 /*shapeObjList->shapeObj->pointList = startOfPointList;*/
 
                             }
@@ -544,7 +545,7 @@ void svgAddToPattern(EmbPattern* p)
         /* TODO: subdivide numMoves > 1 */
 
         /*embPattern_addPathObjectAbs(p, embPathObject_create(startOfPointList, startOfFlagList, svgColorToEmbColor(svgAttribute_getValue(currentElement, "stroke")), 1));*/
-        embPattern_addShapeObject(p, rootPathShape );
+        embPattern_addShapeObjectList(p, rootPathShape );
 
     }
     else if(!strcmp(buff, "polygon") ||

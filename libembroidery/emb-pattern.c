@@ -975,6 +975,26 @@ void embPattern_addPathObjectAbs(EmbPattern* p, EmbPathObject* obj)
         p->lastPathObj = p->lastPathObj->next;
     }
 }
+void embPattern_addShapeObjectList(EmbPattern* p, EmbShapeObjectList* pointer)
+{
+    if(!p) { embLog_error("emb-pattern.c embPattern_addShapeObjectList(), p argument is null\n"); return; }
+    if(!pointer) { embLog_error("emb-pattern.c embPattern_addShapeObjectList(), pointer argument is null\n"); return; }
+
+    if(!(p->shapeObjList))
+    {
+        p->shapeObjList = pointer;
+        p->lastShapeObj = p->shapeObjList;
+    }
+    else
+    {
+        /*embShapeObjectList_add(p->lastShapeObj, pointer);*/
+        p->lastShapeObj->next = pointer;
+    }
+    while(p->lastShapeObj->next)
+    {
+        p->lastShapeObj = p->lastShapeObj->next;
+    }
+}
 void embPattern_addShapeObject(EmbPattern* p, EmbShapeObject* obj)
 {
     if(!p) { embLog_error("emb-pattern.c embPattern_addPathObjectAbs(), p argument is null\n"); return; }
