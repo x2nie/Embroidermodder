@@ -12,12 +12,23 @@ unit libembroidery;
 
 interface
 uses
-{$IFDEF WIN32}
-  Windows;
+{$IFDEF FPC}
+  dynlibs;
 {$ELSE}
-  Wintypes, WinProcs;
-{$ENDIF}
+  {$IFDEF WIN32}
+    Windows;
+  {$ELSE}
+    Wintypes, WinProcs;
+  {$ENDIF}
+{$ENDIF}  
 
+{$DEFINE EMBOBJECT}
+{.$DEFINE EMBOBJECTS_PREV}
+{$IFNDEF MSDOS}
+  {$IFNDEF FPC}
+    {$DEFINE SetErrorMode}
+  {$ENDIF}
+{$ENDIF}
 
 type
 
@@ -249,7 +260,7 @@ type
   end {EmbRectObject_};
 
 
-  PEmbRectObjectList = ^PEmbRectObjectList;
+  PEmbRectObjectList = ^TEmbRectObjectList;
   TEmbRectObjectList = record
     rectObj: TEmbRectObject;
     next: PEmbRectObjectList;
@@ -283,6 +294,7 @@ type
     next: PEmbSplineObjectList;
   end {EmbSplineObjectList_};
 
+{$IFDEF EMBOBJECT}
 type
   PEmbObject = ^TEmbObject;
   TEmbObject = record
@@ -297,12 +309,13 @@ type
   PEmbObjectList = ^TEmbObjectList;
   TEmbObjectList = record
     objectObj: PEmbObject;
-{$IFDEF TEmbObjectS_PREV}
+{$IFDEF EMBOBJECTS_PREV}
     prev: PEmbObjectList;
 {$ENDIF}
     next: PEmbObjectList;
     child: PEmbObjectList;
   end {EmbObjectList_};
+{$ENDIF}
 
   TEmbPattern = record
     settings: TEmbSettings;
@@ -340,28 +353,28 @@ type
 
 
 var
-  TEmbPattern_create:  function(): PEmbPattern cdecl  {$IFDEF WIN32} stdcall {$ENDIF};
-  TEmbPattern_read:    function(pattern: PEmbPattern;
-                            const fileName: PChar): Integer cdecl  {$IFDEF WIN32} stdcall {$ENDIF};
+  embPattern_create:  function(): PEmbPattern cdecl  {$IFDEF WIN32} stdcall {$ENDIF};
+  embPattern_read:    function(pattern: PEmbPattern;
+            const fileName: PChar): Integer cdecl  {$IFDEF WIN32} stdcall {$ENDIF};
 
-  TEmbPattern_write:   function(const pattern: PEmbPattern;
-                             const fileName: PChar): Integer cdecl  {$IFDEF WIN32} stdcall {$ENDIF}; 
+  embPattern_write:   function(const pattern: PEmbPattern;
+             const fileName: PChar): Integer cdecl  {$IFDEF WIN32} stdcall {$ENDIF};
 
-  TEmbFormat_type:     function(const fileName: PChar): Integer cdecl  {$IFDEF WIN32} stdcall {$ENDIF}; 
+  embFormat_type:     function(const fileName: PChar): Integer cdecl  {$IFDEF WIN32} stdcall {$ENDIF};
 
-  //Object
-  TEmbObject_create:   function (kind: Char;
-                          points: PEmbPointList; 
-                          color: TEmbColor; 
-                          lineType: Integer): PEmbObject cdecl  {$IFDEF WIN32} stdcall {$ENDIF};
-  TEmbObject_free:     procedure (pointer: PEmbObject) cdecl  {$IFDEF WIN32} stdcall {$ENDIF};
-  TEmbObjectList_create: function (data: PEmbObject): PEmbObjectList cdecl  {$IFDEF WIN32} stdcall {$ENDIF};
-  TEmbObjectList_add:  function (pointer: PEmbObjectList;
-                             data: PEmbObject): PEmbObjectList cdecl  {$IFDEF WIN32} stdcall {$ENDIF};
-  TEmbObjectList_count:  function (pointer: PEmbObjectList): Integer cdecl  {$IFDEF WIN32} stdcall {$ENDIF};
-  TEmbObjectList_empty:  function (pointer: PEmbObjectList): Integer cdecl  {$IFDEF WIN32} stdcall {$ENDIF};
-  TEmbObjectList_free:   procedure (pointer: PEmbObjectList) cdecl  {$IFDEF WIN32} stdcall {$ENDIF};
-
+{$IFDEF EMBOBJECT}
+ embObject_create:   function (kind: Char;
+					  points: PEmbPointList;
+					  color: TEmbColor;
+					  lineType: Integer): PEmbObject cdecl  {$IFDEF WIN32} stdcall {$ENDIF};
+ embObject_free:     procedure (pointer: PEmbObject) cdecl  {$IFDEF WIN32} stdcall {$ENDIF};
+ embObjectList_create: function (data: PEmbObject): PEmbObjectList cdecl  {$IFDEF WIN32} stdcall {$ENDIF};
+ embObjectList_add:  function (pointer: PEmbObjectList;
+						 data: PEmbObject): PEmbObjectList cdecl  {$IFDEF WIN32} stdcall {$ENDIF};
+ embObjectList_count:  function (pointer: PEmbObjectList): Integer cdecl  {$IFDEF WIN32} stdcall {$ENDIF};
+ embObjectList_empty:  function (pointer: PEmbObjectList): Integer cdecl  {$IFDEF WIN32} stdcall {$ENDIF};
+ embObjectList_free:   procedure (pointer: PEmbObjectList) cdecl  {$IFDEF WIN32} stdcall {$ENDIF};
+{$ENDIF}
 
 
 var
@@ -370,10 +383,22 @@ var
 
 implementation
 
+const
+{$IFDEF win32}
+  emblib = 'libembroidery.dll';
+{$ELSE}
+  {$IFDEF darwin}
+    emblib = 'libembroidery';
+    {$linklib libembroidery}
+  {$ELSE}
+    emblib = 'libembroidery.so';
+  {$ENDIF}
+{$ENDIF}
+
 var
   SaveExit: pointer;
   DLLHandle: THandle;
-{$IFNDEF MSDOS}
+{$IFDEF SetErrorMode}
   ErrorMode: Integer;
 {$ENDIF}
 
@@ -386,10 +411,10 @@ var
 procedure LoadDLL;
 begin
   if DLLLoaded then Exit;
-{$IFNDEF MSDOS}
+{$IFDEF SetErrorMode}
   ErrorMode := SetErrorMode($8000{SEM_NoOpenFileErrorBox});
 {$ENDIF}
-  DLLHandle := LoadLibrary('libembroidery.dll');
+  DLLHandle := LoadLibrary(emblib);
   if DLLHandle >= 32 then
   begin
     DLLLoaded := True;
@@ -398,21 +423,23 @@ begin
 
     @embPattern_create := GetProcAddress(DLLHandle,'embPattern_create');
   {$IFDEF WIN32}
+    //I need to sure we are using correct lib, but this context doesn't work:
     //Assert(assigned(@embPattern_read));
   {$ENDIF}
 
     @embPattern_read := GetProcAddress(DLLHandle,'embPattern_read');
     @embPattern_write := GetProcAddress(DLLHandle,'embPattern_write');
     @embFormat_type := GetProcAddress(DLLHandle,'embFormat_type');
-    
-    @EmbObject_create   := GetProcAddress(DLLHandle,'EmbObject_create');
-    @EmbObject_free     := GetProcAddress(DLLHandle,'EmbObject_free');
-    @EmbObjectList_create := GetProcAddress(DLLHandle,'EmbObjectList_create');
-    @EmbObjectList_add    := GetProcAddress(DLLHandle,'EmbObjectList_add');
-    @EmbObjectList_count  := GetProcAddress(DLLHandle,'EmbObjectList_count');
-    @EmbObjectList_empty  := GetProcAddress(DLLHandle,'EmbObjectList_empty');
-    @EmbObjectList_free   := GetProcAddress(DLLHandle,'EmbObjectList_free');
-  
+
+{$IFDEF EMBOBJECT}
+    @embObject_create   := GetProcAddress(DLLHandle,'embObject_create');
+    @embObject_free     := GetProcAddress(DLLHandle,'embObject_free');
+    @embObjectList_create := GetProcAddress(DLLHandle,'embObjectList_create');
+    @embObjectList_add    := GetProcAddress(DLLHandle,'embObjectList_add');
+    @embObjectList_count  := GetProcAddress(DLLHandle,'embObjectList_count');
+    @embObjectList_empty  := GetProcAddress(DLLHandle,'embObjectList_empty');
+    @embObjectList_free   := GetProcAddress(DLLHandle,'embObjectList_free');
+{$ENDIF}  
 
 
   end
@@ -421,7 +448,7 @@ begin
     DLLLoaded := False;
     { Error: LIBEMBROIDERMODDER2.DLL could not be loaded !! }
   end;
-{$IFNDEF MSDOS}
+{$IFDEF SetErrorMode}
   SetErrorMode(ErrorMode)
 {$ENDIF}
 end {LoadDLL};
