@@ -24,7 +24,7 @@ extern "C" {
 #define QUADTOCONTROL    256
 #define QUADTOEND        512*/
 
-typedef struct EmbObjectList_ EmbObjectList_;
+
 typedef struct EmbObject_
 {
     char kind;
