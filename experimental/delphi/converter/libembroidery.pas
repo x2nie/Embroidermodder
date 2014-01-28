@@ -24,8 +24,8 @@ uses
 
 {$DEFINE EMBOBJECT}
 {.$DEFINE EMBOBJECTS_PREV}
-{$IFNDEF MSDOS}
-  {$IFNDEF FPC}
+{$IFNDEF FPC}
+  {$IFNDEF MSDOS}
     {$DEFINE SetErrorMode}
   {$ENDIF}
 {$ENDIF}
@@ -309,9 +309,9 @@ type
   PEmbObjectList = ^TEmbObjectList;
   TEmbObjectList = record
     objectObj: PEmbObject;
-{$IFDEF EMBOBJECTS_PREV}
+    {$IFDEF EMBOBJECTS_PREV}
     prev: PEmbObjectList;
-{$ENDIF}
+    {$ENDIF}
     next: PEmbObjectList;
     child: PEmbObjectList;
   end {EmbObjectList_};
