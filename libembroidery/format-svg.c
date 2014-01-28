@@ -320,10 +320,8 @@ void svgAddToPattern(EmbPattern* p)
 
         EmbPointList* startOfPointList = 0;
         EmbPointList* pathObjPointList = 0;
-        EmbFlagList* startOfFlagList = 0;
-        EmbFlagList* pathObjFlagList = 0;
-        EmbShapeObjectList* rootPathShape =0;
-        EmbShapeObjectList* shapeObjList =0;
+        EmbObjectList* rootPathShape =0;
+        EmbObjectList* shapeObjList =0;
 
         char* pathbuff = 0;
         pathbuff = (char*)malloc(size);
@@ -426,7 +424,7 @@ void svgAddToPattern(EmbPattern* p)
                             if(!rootPathShape )
                             {
 
-                                rootPathShape = embShapeObjectList_create(embShapeObject_create('G', NULL,embColor_make(0,0,0),0));
+                                rootPathShape = embObjectList_create(embObject_create('G', NULL,embColor_make(0,0,0),0));
                                 startOfPointList = embPointList_create(xx, yy);
                                 pathObjPointList = startOfPointList;
 
@@ -435,7 +433,7 @@ void svgAddToPattern(EmbPattern* p)
                                 if (reset > 4)
                                     pathObjPointList = embPointList_add(pathObjPointList, embPoint_make(cx2, cy2));
 
-                                shapeObjList = embShapeObjectList_create(embShapeObject_create(cmd, startOfPointList,embColor_make(0,0,0),0));
+                                shapeObjList = embObjectList_create(embObject_create(cmd, startOfPointList,embColor_make(0,0,0),0));
                                 /*shapeObjList->shapeObj->pointList = startOfPointList;*/
                                 rootPathShape->child = shapeObjList;
 
@@ -450,7 +448,7 @@ void svgAddToPattern(EmbPattern* p)
                                 if (reset > 4)
                                     pathObjPointList = embPointList_add(pathObjPointList, embPoint_make(cx2, cy2));
 
-                                shapeObjList = embShapeObjectList_add(shapeObjList, embShapeObject_create(cmd, startOfPointList,embColor_make(0,0,0),0));
+                                shapeObjList = embObjectList_add(shapeObjList, embObject_create(cmd, startOfPointList,embColor_make(0,0,0),0));
                                 /*shapeObjList->shapeObj->pointList = startOfPointList;*/
 
                             }
@@ -545,7 +543,7 @@ void svgAddToPattern(EmbPattern* p)
         /* TODO: subdivide numMoves > 1 */
 
         /*embPattern_addPathObjectAbs(p, embPathObject_create(startOfPointList, startOfFlagList, svgColorToEmbColor(svgAttribute_getValue(currentElement, "stroke")), 1));*/
-        embPattern_addShapeObjectList(p, rootPathShape );
+        embPattern_addObjectList(p, rootPathShape );
 
     }
     else if(!strcmp(buff, "polygon") ||

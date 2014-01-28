@@ -38,6 +38,7 @@ SOURCES += \
 ../libembroidery/emb-layer.c \
 ../libembroidery/emb-line.c \
 ../libembroidery/emb-logging.c \
+../libembroidery/emb-object.c \
 ../libembroidery/emb-path.c \
 ../libembroidery/emb-pattern.c \
 ../libembroidery/emb-point.c \
@@ -116,7 +117,7 @@ SOURCES += \
 ../libembroidery/format-vp3.c \
 ../libembroidery/format-xxx.c \
 ../libembroidery/format-zsk.c \
-    ../libembroidery/emb-shape.c
+
 
 HEADERS += \
 ../libembroidery/compound-file.h \
@@ -137,6 +138,7 @@ HEADERS += \
 ../libembroidery/emb-layer.h \
 ../libembroidery/emb-line.h \
 ../libembroidery/emb-logging.h \
+../libembroidery/emb-object.h \
 ../libembroidery/emb-path.h \
 ../libembroidery/emb-pattern.h \
 ../libembroidery/emb-point.h \
@@ -216,5 +218,5 @@ HEADERS += \
 ../libembroidery/format-vp3.h \
 ../libembroidery/format-xxx.h \
 ../libembroidery/format-zsk.h \
-../libembroidery/emb-shape.h
+
 

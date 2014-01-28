@@ -21,7 +21,7 @@ EmbPattern* embPattern_create(void)
     p->stitchList = 0;
     p->threadList = 0;
 
-    p->shapeObjList = 0;
+    p->objectObjList = 0;
 
     p->hoop.height = 0.0;
     p->hoop.width = 0.0;
@@ -975,43 +975,43 @@ void embPattern_addPathObjectAbs(EmbPattern* p, EmbPathObject* obj)
         p->lastPathObj = p->lastPathObj->next;
     }
 }
-void embPattern_addShapeObjectList(EmbPattern* p, EmbShapeObjectList* pointer)
+void embPattern_addObjectList(EmbPattern* p, EmbObjectList* pointer)
 {
-    if(!p) { embLog_error("emb-pattern.c embPattern_addShapeObjectList(), p argument is null\n"); return; }
-    if(!pointer) { embLog_error("emb-pattern.c embPattern_addShapeObjectList(), pointer argument is null\n"); return; }
+    if(!p) { embLog_error("emb-pattern.c embPattern_addObjectList(), p argument is null\n"); return; }
+    if(!pointer) { embLog_error("emb-pattern.c embPattern_addObjectList(), pointer argument is null\n"); return; }
 
-    if(!(p->shapeObjList))
+    if(!(p->objectObjList))
     {
-        p->shapeObjList = pointer;
-        p->lastShapeObj = p->shapeObjList;
+        p->objectObjList = pointer;
+        p->lastObjectObj = p->objectObjList;
     }
     else
     {
-        /*embShapeObjectList_add(p->lastShapeObj, pointer);*/
-        p->lastShapeObj->next = pointer;
+        /*embObjectList_add(p->lastObjectObj, pointer);*/
+        p->lastObjectObj->next = pointer;
     }
-    while(p->lastShapeObj->next)
+    while(p->lastObjectObj->next)
     {
-        p->lastShapeObj = p->lastShapeObj->next;
+        p->lastObjectObj = p->lastObjectObj->next;
     }
 }
-void embPattern_addShapeObject(EmbPattern* p, EmbShapeObject* obj)
+void embPattern_addObject(EmbPattern* p, EmbObject* obj)
 {
     if(!p) { embLog_error("emb-pattern.c embPattern_addPathObjectAbs(), p argument is null\n"); return; }
     if(!obj) { embLog_error("emb-pattern.c embPattern_addPathObjectAbs(), obj argument is null\n"); return; }
 
-    if(!(p->shapeObjList))
+    if(!(p->objectObjList))
     {
-        p->shapeObjList = embShapeObjectList_create(obj);
-        p->lastShapeObj = p->shapeObjList;
+        p->objectObjList = embObjectList_create(obj);
+        p->lastObjectObj = p->objectObjList;
     }
     else
     {
-        embShapeObjectList_add(p->lastShapeObj, obj);
+        embObjectList_add(p->lastObjectObj, obj);
     }
-    while(p->lastShapeObj->next)
+    while(p->lastObjectObj->next)
     {
-        p->lastShapeObj = p->lastShapeObj->next;
+        p->lastObjectObj = p->lastObjectObj->next;
     }
 }
 
