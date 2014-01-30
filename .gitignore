@@ -24,6 +24,7 @@ libembroidery/_memleak*
 libembroidery/doxygen
 libembroidery/lib
 libembroidery/object_script.*
+libembroidery/Debug
 
 #########################
 # libembroidery-convert #
@@ -59,8 +60,7 @@ thumbnailer-kde4/libembroidery-thumbnailer-kde4.so
 # Project Files         #
 #########################
 project-files/qmake/Makefile
-project-files/visualstudio/Debug
-project-files/visualstudio/Release
+
 
 #########################
 # OS generated files    #
@@ -72,4 +72,18 @@ project-files/visualstudio/Release
 ehthumbs.db
 Thumbs.db
 
+#########################
+# Built                 #
+#########################
 shared-build*
+*.user
+Debug
+Release
+
+#########################
+# Visual Studio         #
+#########################
+*.idb
+*.pdb
+*.ncb
+*.old
