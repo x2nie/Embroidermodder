@@ -59,6 +59,8 @@ thumbnailer-kde4/libembroidery-thumbnailer-kde4.so
 # Project Files         #
 #########################
 project-files/qmake/Makefile
+project-files/visualstudio/Debug
+project-files/visualstudio/Release
 
 #########################
 # OS generated files    #
@@ -69,3 +71,5 @@ project-files/qmake/Makefile
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+shared-build*

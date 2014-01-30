@@ -16,15 +16,21 @@ type
     btnEmbOpen: TButton;
     vtOpen: TVirtualStringTree;
     spl1: TSplitter;
-    VirtualStringTree1: TVirtualStringTree;
+    vtOutExt: TVirtualStringTree;
     procedure FormCreate(Sender: TObject);
     procedure btnEmbOpenClick(Sender: TObject);
     procedure vtOpenGetText(Sender: TBaseVirtualTree; Node: PVirtualNode;
       Column: TColumnIndex; TextType: TVSTTextType;
       var CellText: WideString);
+    procedure vtOutExtGetText(Sender: TBaseVirtualTree;
+      Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType;
+      var CellText: WideString);
+    procedure vtOutExtInitNode(Sender: TBaseVirtualTree; ParentNode,
+      Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
   private
     { Private declarations }
-    FFiles : TStrings;
+    FInputFiles : TStrings;
+    FOutputExts : TStrings;
   public
     { Public declarations }
   end;
@@ -49,7 +55,10 @@ type
 procedure TForm1.FormCreate(Sender: TObject);
 begin
   mmo1.Lines.Add( EmbReadersFilter() );
-  FFiles := TStringList.Create;
+  FInputFiles := TStringList.Create;
+  FOutputExts := TStringList.Create;
+  EmbFillWriter(FOutputExts);
+  vtOutExt.RootNodeCount := FOutputExts.Count;
   self.dlgOpen1.Filter := EmbReadersFilter();
 
 end;
@@ -65,10 +74,10 @@ begin
   begin
     for i := 0 to dlgOpen1.Files.Count -1 do
     begin
-      if FFiles.IndexOf(dlgOpen1.Files[i]) < 0 then
-        FFiles.Add(dlgOpen1.Files[i]);
+      if FInputFiles.IndexOf(dlgOpen1.Files[i]) < 0 then
+        FInputFiles.Add(dlgOpen1.Files[i]);
     end;
-    vtOpen.RootNodeCount := FFiles.Count;
+    vtOpen.RootNodeCount := FInputFiles.Count;
 
   end;
 end;
@@ -77,7 +86,20 @@ procedure TForm1.vtOpenGetText(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType;
   var CellText: WideString);
 begin
-  CellText := FFiles[Node^.index];
+  CellText := FInputFiles[Node^.index];
+end;
+
+procedure TForm1.vtOutExtGetText(Sender: TBaseVirtualTree;
+  Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType;
+  var CellText: WideString);
+begin
+  CellText := FOutputExts[Node^.index];
+end;
+
+procedure TForm1.vtOutExtInitNode(Sender: TBaseVirtualTree; ParentNode,
+  Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
+begin
+  Node^.CheckType := ctCheckBox;
 end;
 
 end.

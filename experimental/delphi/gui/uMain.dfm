@@ -17,12 +17,12 @@ object Form1: TForm1
   object spl1: TSplitter
     Left = 433
     Top = 49
-    Height = 290
+    Height = 306
   end
   object mmo1: TMemo
     Left = 0
-    Top = 339
-    Width = 1314
+    Top = 355
+    Width = 920
     Height = 98
     Align = alBottom
     Lines.Strings = (
@@ -32,7 +32,7 @@ object Form1: TForm1
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 1314
+    Width = 920
     Height = 49
     Align = alTop
     Caption = 'Panel1'
@@ -59,7 +59,7 @@ object Form1: TForm1
     Left = 0
     Top = 49
     Width = 433
-    Height = 290
+    Height = 306
     Align = alLeft
     Header.AutoSizeIndex = 0
     Header.Font.Charset = DEFAULT_CHARSET
@@ -72,11 +72,11 @@ object Form1: TForm1
     OnGetText = vtOpenGetText
     Columns = <>
   end
-  object VirtualStringTree1: TVirtualStringTree
+  object vtOutExt: TVirtualStringTree
     Left = 436
     Top = 49
     Width = 433
-    Height = 290
+    Height = 306
     Align = alLeft
     Header.AutoSizeIndex = 0
     Header.Font.Charset = DEFAULT_CHARSET
@@ -86,6 +86,9 @@ object Form1: TForm1
     Header.Font.Style = []
     Header.MainColumn = -1
     TabOrder = 3
+    TreeOptions.MiscOptions = [toAcceptOLEDrop, toCheckSupport, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning, toEditOnClick]
+    OnGetText = vtOutExtGetText
+    OnInitNode = vtOutExtInitNode
     Columns = <>
   end
   object dlgOpen1: TOpenDialog

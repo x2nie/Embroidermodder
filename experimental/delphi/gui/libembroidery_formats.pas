@@ -6,7 +6,7 @@ uses
     libembroidery, Classes, Windows, Messages, SysUtils, Variants;
 
 
-{.$DEFINE EMBFORMAT_SUPPORTEDONLY} //Strict to lists only implemented format 
+{$DEFINE EMBFORMAT_SUPPORTEDONLY} //Strict to lists only implemented format 
 
 const
   EmbFormatSupportedCount = 59;
@@ -75,7 +75,7 @@ const
 
 
 function EmbReadersFilter(): string ;
-
+procedure EmbFillWriter(AList: TStrings);
 
 implementation
 
@@ -143,7 +143,13 @@ begin
         ext := lowerCase( copy(s, 6, length(s)) );
         if GWriters.IndexOfName(ext) < 0 then
         begin
+          {$IFNDEF EMBFORMAT_SUPPORTEDONLY}
           GWriters.Values[ext] := NameOfExt(ext,2,'Embroidery Format');
+          {$ELSE}
+          name := NameOfExt(ext,1);
+          if name <> '' then
+            GWriters.Values[ext] := name;
+          {$ENDIF}
         end;
 
       end;
@@ -152,6 +158,13 @@ begin
   finally
     LList.Free
   end;
+end;
+
+procedure EmbFillWriter(AList: TStrings);
+begin
+  if not assigned(GReaders) then
+     ScanDLL_AssumedReaderOrWriterEXT;
+  AList.Assign(GWriters);
 end;
 
 function EmbReadersFilter(): string ;
@@ -168,12 +181,12 @@ begin
   begin
     if result <> '' then
       result := result + '|';
-    result := result + format('%s (*.%1:s)|*.%1:s',[GReaders.ValueFromIndex[i],GReaders.Names[i] ]);
+    result := result + format('%s  (*.%1:s)|*.%1:s',[GReaders.ValueFromIndex[i],GReaders.Names[i] ]);
     if all <> '' then
       all := all + ';';
     all := all + format('*.%s', [GReaders.Names[i]]);
   end;
-  result := format('%s (%1:s)|*.%1:s',['All embroidery format',all ]) +'|'+ result;
+  result := format('%s  (%1:s)|*.%1:s',['All embroidery format',all ]) +'|'+ result;
 
   {$ELSE}
 
