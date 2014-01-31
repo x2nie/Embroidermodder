@@ -14,11 +14,27 @@ Dependencies
 * Delphi ver 5.0, 6.0, 7.0, 2005, 2006, 2010, XE, XE2, XE3, XE4, XE5 (Delphi 8 is not supported)
 http://www.embarcadero.com/products/delphi
 
-* Lazarus ver 1.0.10 up
+* Lazarus ver 1.0.8 up
 http://www.lazarus.freepascal.org/
 
+Linux:
+Download *.deb from
+http://sourceforge.net/projects/lazarus/files/Lazarus%20Linux%20i386%20DEB/Lazarus%201.0.14/
+You need all 3 packages:
+* lazarus_1.0.14-0_i386.deb
+* fpc-src_2.6.2-0_i386.deb
+* fpc_2.6.2-0_i386.deb
+
+Opening a ter terminal, locate to your downloaded files directory, and
+```
+sudo dpkg -i *.deb
+```
+See detail step-by-step  here:
+* http://lazplanet.blogspot.com/2013/05/how-to-install-lazarus-108-on-ubuntu.html
+* http://askubuntu.com/questions/364003/cant-correctly-install-lazarus
+
 Ubuntu repository packages:
-The FreePascal and Lazarus build dependencies can be installed easily by opening a terminal and issuing this command:
+The outdated FreePascal (2.4.4) and Lazarus (0.9.30) build dependencies can be installed easily by opening a terminal and issuing this command:
 ```
 sudo apt-get install fpc-source lazarus
 ```

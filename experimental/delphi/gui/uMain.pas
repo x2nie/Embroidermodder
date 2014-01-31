@@ -107,6 +107,10 @@ type
       var CellText: WideString);
     procedure edtOutputDifferentDirChange(Sender: TObject);
     procedure RebuildOutputResult(Sender: TObject);
+    procedure vtExtsCompareNodes(Sender: TBaseVirtualTree; Node1,
+      Node2: PVirtualNode; Column: TColumnIndex; var Result: Integer);
+    procedure vtExtsColumnClick(Sender: TBaseVirtualTree;
+      Column: TColumnIndex; Shift: TShiftState);
   private
     { Private declarations }
     FInputFiles : TStrings;
@@ -177,7 +181,8 @@ begin
     AddNew(vtExts.RootNode, '.'+LExtList.Names[i], LExtList.ValueFromIndex[i]);
   end;
   LExtList.Free;
-
+  vtExts.OnCompareNodes := vtExtsCompareNodes;
+  vtExts.Sort(nil,1, sdAscending );
 end;
 
 
@@ -475,6 +480,36 @@ procedure TForm1.edtOutputDifferentDirChange(Sender: TObject);
 begin
   rbOutputDifferentDir.Checked := true;
   RebuildOutputResult(nil);
+end;
+
+procedure TForm1.vtExtsCompareNodes(Sender: TBaseVirtualTree; Node1,
+  Node2: PVirtualNode; Column: TColumnIndex; var Result: Integer);
+var
+  x1,x2 : PEmbExt;
+begin
+  result := 0;
+  x1 := vtExts.GetNodeData(Node1);
+  x2 := vtExts.GetNodeData(Node2);
+  if assigned(x1) and assigned(x2) then
+  case Column of
+    0 : result := CompareText(x1^.Ext, x2^.Ext) ;
+    1 : result := CompareText(x1^.Desc, x2^.Desc);
+  end;
+
+
+end;
+
+procedure TForm1.vtExtsColumnClick(Sender: TBaseVirtualTree;
+  Column: TColumnIndex; Shift: TShiftState);
+begin
+{  if vtExts.Header.SortColumn = column then
+  begin
+    vtExts.Header.SortDirection := pred(vtExts.Header.SortDirection);
+  end
+  else
+  begin
+    vtExts.Header.SortColumn := Column;
+  end;}
 end;
 
 end.
