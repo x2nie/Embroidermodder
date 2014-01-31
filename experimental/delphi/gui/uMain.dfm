@@ -123,13 +123,13 @@ object Form1: TForm1
       Left = 0
       Top = 0
       Width = 421
-      Height = 185
+      Height = 265
       Align = alTop
       BevelOuter = bvNone
       TabOrder = 0
       DesignSize = (
         421
-        185)
+        265)
       object rgAdditionalDir: TRadioGroup
         Left = 16
         Top = 104
@@ -140,10 +140,12 @@ object Form1: TForm1
         Columns = 3
         ItemIndex = 2
         Items.Strings = (
-          'Filename'
-          'File Extension'
+          'Source Filename'
+          'Source File Extension'
+          'Destination File Extension'
           'None')
         TabOrder = 0
+        OnClick = RebuildOutputResult
       end
       object grpTargetDir: TGroupBox
         Left = 16
@@ -161,35 +163,78 @@ object Form1: TForm1
           Top = 24
           Width = 185
           Height = 17
-          Caption = 'In the same directory of source'
+          Caption = '&In the same directory of source'
           Checked = True
           TabOrder = 0
           TabStop = True
+          OnClick = RebuildOutputResult
         end
         object rbOutputDifferentDir: TRadioButton
           Left = 8
           Top = 48
           Width = 113
           Height = 17
-          Caption = 'Other:'
+          Caption = 'O&ther:'
           TabOrder = 1
+          OnClick = RebuildOutputResult
         end
-        object edtOutputDir: TEdit
+        object edtOutputDifferentDir: TEdit
           Left = 25
           Top = 64
           Width = 358
           Height = 21
           Anchors = [akLeft, akTop, akRight]
           TabOrder = 2
-          OnChange = edtOutputDirChange
+          OnChange = edtOutputDifferentDirChange
+        end
+      end
+      object GroupBox1: TGroupBox
+        Left = 16
+        Top = 168
+        Width = 393
+        Height = 57
+        Anchors = [akLeft, akTop, akRight]
+        Caption = 'Additional name'
+        TabOrder = 2
+        object lblPrefix: TLabel
+          Left = 16
+          Top = 24
+          Width = 26
+          Height = 13
+          Caption = '&Prefix'
+          FocusControl = edtPrefix
+        end
+        object lblSuffix: TLabel
+          Left = 192
+          Top = 24
+          Width = 26
+          Height = 13
+          Caption = '&Suffix'
+          FocusControl = edtSuffix
+        end
+        object edtPrefix: TEdit
+          Left = 56
+          Top = 24
+          Width = 121
+          Height = 21
+          TabOrder = 0
+          OnChange = RebuildOutputResult
+        end
+        object edtSuffix: TEdit
+          Left = 232
+          Top = 24
+          Width = 121
+          Height = 21
+          TabOrder = 1
+          OnChange = RebuildOutputResult
         end
       end
     end
     object vtResult: TVirtualStringTree
       Left = 0
-      Top = 185
+      Top = 265
       Width = 421
-      Height = 121
+      Height = 41
       Align = alClient
       Header.AutoSizeIndex = 0
       Header.Font.Charset = DEFAULT_CHARSET

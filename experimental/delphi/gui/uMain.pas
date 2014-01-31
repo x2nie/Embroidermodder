@@ -78,7 +78,12 @@ type
     grpTargetDir: TGroupBox;
     rbInPlace: TRadioButton;
     rbOutputDifferentDir: TRadioButton;
-    edtOutputDir: TEdit;
+    edtOutputDifferentDir: TEdit;
+    GroupBox1: TGroupBox;
+    edtPrefix: TEdit;
+    edtSuffix: TEdit;
+    lblPrefix: TLabel;
+    lblSuffix: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure btnEmbOpenClick(Sender: TObject);
     procedure vtOpenGetText(Sender: TBaseVirtualTree; Node: PVirtualNode;
@@ -100,14 +105,14 @@ type
     procedure vtResultGetText(Sender: TBaseVirtualTree; Node: PVirtualNode;
       Column: TColumnIndex; TextType: TVSTTextType;
       var CellText: WideString);
-    procedure edtOutputDirChange(Sender: TObject);
+    procedure edtOutputDifferentDirChange(Sender: TObject);
+    procedure RebuildOutputResult(Sender: TObject);
   private
     { Private declarations }
     FInputFiles : TStrings;
     //FOutputExts : TStrings;
     procedure AddOpenFile(AFilePath: string);
     procedure FillExts;
-    procedure RebuildOutputResult;
   public
     { Public declarations }
   end;
@@ -284,10 +289,10 @@ end;
 procedure TForm1.vtExtsChecked(Sender: TBaseVirtualTree;
   Node: PVirtualNode);
 begin
-  RebuildOutputResult();
+  RebuildOutputResult(nil);
 end;
 
-procedure TForm1.RebuildOutputResult();
+procedure TForm1.RebuildOutputResult(Sender: TObject);
 var LExts : array of string;
 
   procedure ScanExts();
@@ -312,53 +317,111 @@ var LExts : array of string;
 
   var
     RData : PResult;
-  function AddNew(Parent: PVirtualNode; AText: string; ASource: string=''; APath: string=''):PVirtualNode;
+  function AddNew(Parent: PVirtualNode; AText: string; ASource: string=''; APath: string='';
+    AllowPrefixSuffix: boolean=True):PVirtualNode;
+  var
+    ext, fn : string;
   begin
     result := vtResult.AddChild(Parent);
     RData := vtResult.GetNodeData(result);
+    if AllowPrefixSuffix and ((edtSuffix.Text <> EmptyStr) or (edtPrefix.Text <> EmptyStr)) then
+    begin
+      fn := ExtractFileName(AText);
+      ext := ExtractFileExt(AText);
+      fn := copy(fn, 1, length(fn)-length(ext) );
+      Atext := edtPrefix.Text + fn + edtSuffix.Text + ext;
+    end;
     RData^.Txt := Atext;
     RData^.processed := False;
     RData^.Source := ASource;
     RData^.SourcePath := APath;
   end;
-  procedure AttachManyExt(Parent: PVirtualNode; AText: string; ASource: string=''; APath: string='');
-  begin
 
-  end;
-
-  procedure AddNewResult(AFile, APath: string);
-  var Parent : PVirtualNode;
+  function GetPathNodeHasText(RootPathNode:PVirtualNode; AText:string): PVirtualNode ;
+  var DstChild : PVirtualNode;
     i : integer;
   begin
     //find parent
-    Parent := vtResult.RootNode.FirstChild;
-    while Parent <> nil do
+    DstChild := RootPathNode.FirstChild;//vtResult.RootNode.FirstChild;
+    while DstChild <> nil do
     begin
-      RData := vtResult.GetNodeData(Parent);
-      if RData^.Txt = APath then
+      RData := vtResult.GetNodeData(DstChild);
+      if RData^.Txt = AText then
       begin
         break; //found.
       end
       else
       begin
-        Parent := Parent.NextSibling;
+        DstChild := DstChild.NextSibling;
       end;
     end;
-    if Not Assigned(Parent) then
+    if Not Assigned(DstChild) then
     begin
       //append parent to root
-      Parent := AddNew(vtResult.RootNode, APath);
+      DstChild := AddNew(RootPathNode, AText, EmptyStr, EmptyStr, False);
+    end;
+    result := DstChild;
+  end;
+
+  procedure AddNewResultFiles(ASrcFile, ASrcPath: string);
+  var DstParent, SubParent : PVirtualNode;
+    i : integer;
+    ext,ext2, fn : string;
+  begin
+    //find parent
+    if rbOutputDifferentDir.Checked then
+      DstParent := GetPathNodeHasText(vtResult.RootNode, edtOutputDifferentDir.Text)
+    else
+      DstParent := GetPathNodeHasText(vtResult.RootNode, ASrcPath);
+
+    case rgAdditionalDir.ItemIndex of
+      0 : //Source Filename
+          begin
+            for i := 0 to length(LExts) -1 do
+            begin
+              fn := ExtractFileName(ASrcFile);
+              ext := ExtractFileExt(ASrcFile);
+              fn := copy(fn, 1, length(fn)-length(ext) );
+              SubParent := GetPathNodeHasText(DstParent, fn);
+              AddNew(SubParent, ChangeFileExt(ASrcFile, LExts[i]), ASrcFile, ASrcPath );
+            end;
+          end;
+      1 : //Source File Extension
+          begin
+            for i := 0 to length(LExts) -1 do
+            begin
+              ext := ExtractFileExt(ASrcFile);
+              ext := copy(ext, 2, length(ext));
+              SubParent := GetPathNodeHasText(DstParent, ext);
+              AddNew(SubParent, ChangeFileExt(ASrcFile, LExts[i]), ASrcFile, ASrcPath );
+            end;
+          end;
+      2 : //Destination File Extension
+          begin
+            for i := 0 to length(LExts) -1 do
+            begin
+              ext := ExtractFileExt(LExts[i]);
+              if pos('.',ext) = 1 then
+                ext := copy(ext, 2, length(ext));
+              SubParent := GetPathNodeHasText(DstParent, ext);
+              AddNew(SubParent, ChangeFileExt(ASrcFile, LExts[i]), ASrcFile, ASrcPath );
+            end;
+          end;
+      else //None
+          begin
+            //append child to parent
+            for i := 0 to length(LExts) -1 do
+            begin
+              AddNew(DstParent, ChangeFileExt(ASrcFile, LExts[i]), ASrcFile, ASrcPath );
+            end;
+          end;
     end;
 
-    //append child to parent
-    for i := 0 to length(LExts) -1 do
-    begin
-      AddNew(Parent, ChangeFileExt(AFile, LExts[i]), AFile, APath );
-    end;
+
   end;
 
 var
-  Parent, Node, RNode : PVirtualNode;
+  SrcParent, SrcNode, RNode : PVirtualNode;
   R : PResult;
   ParentData, Data : PData;
 
@@ -368,31 +431,20 @@ begin
   try
     vtResult.Clear;
     ScanExts();
-    Parent := vtOpen.RootNode.FirstChild;
-    while Parent <> nil do
+    SrcParent := vtOpen.RootNode.FirstChild;
+    while SrcParent <> nil do
     begin
-      ParentData := vtOpen.GetNodeData(Parent);
+      ParentData := vtOpen.GetNodeData(SrcParent);
 
-      Node := Parent.FirstChild;
-      while Node <> nil do
+      SrcNode := SrcParent.FirstChild;
+      while SrcNode <> nil do
       begin
-        Data := vtOpen.GetNodeData(Node);
-        {RNode := vtResult.AddChild(nil);
-        R := vtResult.GetNodeData(RNode);
-        R^.Txt := Data^.Txt;}
-        AddNewResult(Data^.Txt, ParentData^.Txt);
-        Node := Node.NextSibling;
+        Data := vtOpen.GetNodeData(SrcNode);
+        AddNewResultFiles(Data^.Txt, ParentData^.Txt);
+        SrcNode := SrcNode.NextSibling;
       end;
       
-      {Node := vtExts.GetNextChecked(Node, csCheckedNormal, true);
-      if assigned(Node) then
-      begin
-        i := Length(LExts);
-        SetLength(LExts, i+1);
-        R := vtExts.GetNodeData(Node);
-        LExts[i] := R^.Ext;
-      end;}
-      Parent := Parent.NextSibling;
+      SrcParent := SrcParent.NextSibling;
     end;
   finally
     vtResult.FullExpand();
@@ -419,9 +471,10 @@ begin
   end;
 end;
 
-procedure TForm1.edtOutputDirChange(Sender: TObject);
+procedure TForm1.edtOutputDifferentDirChange(Sender: TObject);
 begin
   rbOutputDifferentDir.Checked := true;
+  RebuildOutputResult(nil);
 end;
 
 end.
