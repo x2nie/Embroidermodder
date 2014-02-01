@@ -30,8 +30,9 @@ Opening a ter terminal, locate to your downloaded files directory, and
 sudo dpkg -i *.deb
 ```
 See detail step-by-step  here:
-* http://lazplanet.blogspot.com/2013/05/how-to-install-lazarus-108-on-ubuntu.html
+* http://lazplanet.blogspot.com/2013/03/how-to-install-lazarus.html
 * http://askubuntu.com/questions/364003/cant-correctly-install-lazarus
+* http://lazplanet.blogspot.com/2013/05/how-to-install-lazarus-108-on-ubuntu.html
 
 Ubuntu repository packages:
 The outdated FreePascal (2.4.4) and Lazarus (0.9.30) build dependencies can be installed easily by opening a terminal and issuing this command:
