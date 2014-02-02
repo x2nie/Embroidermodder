@@ -77,8 +77,27 @@ extern "C" {
 #define EMBFORMAT_STITCHONLY 1
 #define EMBFORMAT_STCHANDOBJ 3 /* binary operation: 1+2=3 */
 #define EMBFORMAT_OBJECTONLY 2
+#define EMBFORMAT_COUNT 59      /* total supported format, distinctive version included */
+
+typedef struct EmbFormat_
+{
+    char* ext;
+    /* used for grouping all version, such OpenDialogBox: "Brother (*.pes)  */
+    char* masterInfo;
+    /* used for specific version, such SaveDialogBox: Brother 001 (*.pes)| Brother 006 (*.pes) */
+    char* detailInfo;
+    char* readerName;
+    char* writerName;
+    /*int (*reader)(EmbPattern*, const char*);*/
+    /*int (*writer)(EmbPattern*, const char*);*/
+    int formatType;
+} EmbFormat;
 
 extern EMB_PUBLIC int EMB_CALL embFormat_type(const char* fileName);
+extern EMB_PUBLIC int EMB_CALL embFormat_count();
+extern EMB_PUBLIC void EMB_CALL embFormat_get(int index, EmbFormat* format);
+
+
 
 #ifdef __cplusplus
 }

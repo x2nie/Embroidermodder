@@ -4,6 +4,66 @@
 #include <string.h>
 #include <ctype.h>
 
+/*! Returns EMBFORMAT_COUNT.
+ *  Intended to not lie the wrapper/binding of shared library usage
+ *  The benefit is consistency of host code,
+ *  while the shared library may is possibly upgraded */
+int embFormat_count()
+{
+    return EMBFORMAT_COUNT;
+}
+
+/*! Fill related info to EmbFormat sequenced by given index.
+ *  Due we may insert a new format at anywhere in future,
+ *  index must not be hardcoded to any relevan EmbFormat. */
+void embFormat_get(int index, EmbFormat* format){
+    switch(index)
+    {
+    case 0:
+        format->ext = ".10o";
+        format->masterInfo = "Toyota Embroidery Format";
+        format->readerName = "read10o";
+        format->writerName = "write10o";
+        format->formatType = EMBFORMAT_STITCHONLY;
+        break;
+/* TODO: list the rest formats alphabetically */
+    case 1:
+        format->ext = ".pes";
+        format->masterInfo = "Brother Embroidery Format";
+        format->detailInfo = "Brother Embroidery ver 001";
+        format->readerName = "readPes";
+        format->writerName = "writePes001";
+        format->formatType = EMBFORMAT_STITCHONLY + EMBFORMAT_OBJECTONLY;
+        break;
+    case 2:
+        format->ext = ".pes";
+        format->masterInfo = "Brother Embroidery Format";
+        format->detailInfo = "Brother Embroidery ver 006";
+        format->readerName = "readPes";
+        format->writerName = "writePes006";
+        format->formatType = EMBFORMAT_STITCHONLY + EMBFORMAT_OBJECTONLY;
+        break;
+    case 3:
+        format->ext = ".thr";
+        format->masterInfo = "ThredWorks Embroidery Format";
+        format->detailInfo = "Brother Embroidery ver 001";
+        format->readerName = "readThr";
+        format->writerName = "writeThr1";
+        format->formatType = EMBFORMAT_STITCHONLY + EMBFORMAT_OBJECTONLY;
+        break;
+    case 4:
+        format->ext = ".thr";
+        format->masterInfo = "ThredWorks Embroidery Format";
+        format->readerName = "readThr";
+        format->writerName = "writeThr2";
+        format->formatType = EMBFORMAT_STITCHONLY + EMBFORMAT_OBJECTONLY;
+        break;
+    default:
+            /* do nothing for unrecognized index */
+            break;
+    }
+}
+
 /*! Returns EMBFORMAT_STITCHONLY if the format type only contains stitch data.
  *  Returns EMBFORMAT_OBJECTONLY if the format type only contains object data.
  *  Returns EMBFORMAT_STCHANDOBJ if the format type contains both stitch and object data. */
