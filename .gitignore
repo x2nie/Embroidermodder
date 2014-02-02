@@ -83,6 +83,7 @@ shared-build*
 *.user
 Debug
 Release
+*-build-*
 
 #########################
 # Visual Studio         #
@@ -91,3 +92,12 @@ Release
 *.pdb
 *.ncb
 *.old
+
+#########################
+# Delphi Lazarus        #
+#########################
+*.dcu
+*.ppu
+*.~*
+experimental/delphi/*/*.exe
+experimental/delphi/*/*.dll
