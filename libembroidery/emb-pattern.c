@@ -21,8 +21,6 @@ EmbPattern* embPattern_create(void)
     p->stitchList = 0;
     p->threadList = 0;
 
-    p->objectObjList = 0;
-
     p->hoop.height = 0.0;
     p->hoop.width = 0.0;
     p->arcObjList = 0;
@@ -52,6 +50,8 @@ EmbPattern* embPattern_create(void)
 
     p->lastX = 0.0;
     p->lastY = 0.0;
+
+    printf("__GNUC__:%d\n", __GNUC__);
     return p;
 }
 
@@ -973,45 +973,6 @@ void embPattern_addPathObjectAbs(EmbPattern* p, EmbPathObject* obj)
     {
         embPathObjectList_add(p->lastPathObj, obj);
         p->lastPathObj = p->lastPathObj->next;
-    }
-}
-void embPattern_addObjectList(EmbPattern* p, EmbObjectList* pointer)
-{
-    if(!p) { embLog_error("emb-pattern.c embPattern_addObjectList(), p argument is null\n"); return; }
-    if(!pointer) { embLog_error("emb-pattern.c embPattern_addObjectList(), pointer argument is null\n"); return; }
-
-    if(!(p->objectObjList))
-    {
-        p->objectObjList = pointer;
-        p->lastObjectObj = p->objectObjList;
-    }
-    else
-    {
-        /*embObjectList_add(p->lastObjectObj, pointer);*/
-        p->lastObjectObj->next = pointer;
-    }
-    while(p->lastObjectObj->next)
-    {
-        p->lastObjectObj = p->lastObjectObj->next;
-    }
-}
-void embPattern_addObject(EmbPattern* p, EmbObject* obj)
-{
-    if(!p) { embLog_error("emb-pattern.c embPattern_addPathObjectAbs(), p argument is null\n"); return; }
-    if(!obj) { embLog_error("emb-pattern.c embPattern_addPathObjectAbs(), obj argument is null\n"); return; }
-
-    if(!(p->objectObjList))
-    {
-        p->objectObjList = embObjectList_create(obj);
-        p->lastObjectObj = p->objectObjList;
-    }
-    else
-    {
-        embObjectList_add(p->lastObjectObj, obj);
-    }
-    while(p->lastObjectObj->next)
-    {
-        p->lastObjectObj = p->lastObjectObj->next;
     }
 }
 

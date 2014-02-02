@@ -37,7 +37,7 @@ See detail step-by-step  here:
 Ubuntu repository packages:
 The outdated FreePascal (2.4.4) and Lazarus (0.9.30) build dependencies can be installed easily by opening a terminal and issuing this command:
 ```
-sudo apt-get install fpc-source lazarus
+sudo apt-get install fpc-source lazarus lcl
 ```
 Building
 --------

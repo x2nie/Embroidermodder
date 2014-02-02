@@ -18,11 +18,12 @@ uses
   {$IFDEF WIN32}
     Windows;
   {$ELSE}
+    //Dos, Delphi 1, Delphi 2
     Wintypes, WinProcs;
   {$ENDIF}
 {$ENDIF}  
 
-{$DEFINE EMBOBJECT}
+{.$DEFINE EMBOBJECT}
 {.$DEFINE EMBOBJECTS_PREV}
 {$IFNDEF FPC}
   {$IFNDEF MSDOS}
@@ -376,6 +377,15 @@ var
  embObjectList_free:   procedure (pointer: PEmbObjectList) cdecl  {$IFDEF WIN32} stdcall {$ENDIF};
 {$ENDIF}
 
+
+var
+  DLLLoaded: Boolean { is DLL (dynamically) loaded already? }
+    {$IFDEF WIN32} = False {$ENDIF};
+
+implementation
+
+uses
+  SysUtils;
 const
 {$IFDEF win32}
   emblib = 'libembroidery.dll';
@@ -387,14 +397,6 @@ const
     emblib = 'libembroidery.so';
   {$ENDIF}
 {$ENDIF}
-
-var
-  DLLLoaded: Boolean { is DLL (dynamically) loaded already? }
-    {$IFDEF WIN32} = False; {$ENDIF}
-
-implementation
-
-
 
 var
   SaveExit: pointer;
@@ -447,7 +449,7 @@ begin
   else
   begin
     DLLLoaded := False;
-    { Error: LIBEMBROIDERMODDER2.DLL could not be loaded !! }
+    raise Exception.Create( emblib +' could not be loaded !!' );
   end;
 {$IFDEF SetErrorMode}
   SetErrorMode(ErrorMode)
