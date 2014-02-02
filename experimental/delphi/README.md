@@ -6,34 +6,36 @@ The files and examples contained within are intended for use with Delphi(Windows
 ## Dependencies
 All you need to run the pascal code are: a pascal compiler, the binary library of libembroidery; and it's wrapper.
 ###	1. libembroidery binary library
-	Currently only shared dynamic library supported, you must have "libembroidery.dll" (or such libembroidery.so in Linux).
-	You can get it by compiling the "`ibembroidery-shared.pro` in `libembroidery` directory with such QT Creator, 
-	otherwise in Windows, by compiling the `libembroidery.sln` (or in your options `libEmbroideryVS2008.sln`) with Microsoft Visual Studio.
+Currently only shared dynamic library supported, you must have `libembroidery.dll` (or such libembroidery.so in Linux).
+You can get it by compiling the `ibembroidery-shared.pro` in `libembroidery` directory with such QT Creator, 
+otherwise in Windows, by compiling the `libembroidery.sln` (or in your options `libEmbroideryVS2008.sln`) with Microsoft Visual Studio.
+	
 ###	2. libembroidery.pas
-	This pascal unit is a wrapper/binding to make a call to functions within binary library above.
+This pascal unit is a wrapper/binding to make a call to functions within binary library above.
 
 ###	3. Delphi or Lazarus.
-	It is according to you (and your OS) whether you need to run the applications with Delphi or Lazarus.
+It is according to you (and your OS) whether you need to run the applications with Delphi or Lazarus.
+
 #### * Delphi (Mac/Windows)
-	Supported Delphi versions:  5.0, 6.0, 7.0, 2005, 2006, 2010, XE, XE2, XE3, XE4, XE5 (Delphi 8 is not supported)
-	http://www.embarcadero.com/products/delphi
+Supported Delphi versions:  5.0, 6.0, 7.0, 2005, 2006, 2010, XE, XE2, XE3, XE4, XE5 (Delphi 8 is not supported)
+http://www.embarcadero.com/products/delphi
 
 #### * Lazarus (all major OS)
-	The applications has been tested with Lazarus 1.0.14
-	For general & Windows user: Download the Lazarus installer by visit `http://www.lazarus.freepascal.org/` and click download.
+The applications has been tested with Lazarus 1.0.14
+For general & Windows user: Download the Lazarus installer by visit `http://www.lazarus.freepascal.org/` and click download.
 
-	Nowadays, Lazarus is available in many Linux distro's repositories.
-	Get it easily by opening a terminal and issuing this command:
-	```
-	sudo apt-get install fpc-source lazarus lcl
-	```
-	It will also install any package for cross-compile.
-	
-	BUT in this time writing, some Linux repository is outdated, you may got the ver. 0.9.30 of Lazarus, or version 1.0.10 if you luck.
-	It means: You can not upgrade to the latest Lazarus version while the new version is not yet available in the Linux repository.
-	So, if you want to upgrade Lazarus to the latest version, below links may helps a lot:
-	* http://askubuntu.com/questions/364003/cant-correctly-install-lazarus
-	* http://lazplanet.blogspot.com/2013/03/how-to-install-lazarus.html
+Nowadays, Lazarus is available in many Linux distro's repositories.
+Get it easily by opening a terminal and issuing this command:
+```
+sudo apt-get install fpc-source lazarus lcl
+```
+It will also install any package for cross-compile.
+
+BUT in this time writing, some Linux repository is outdated, you may got the ver. 0.9.30 of Lazarus, or version 1.0.10 if you luck.
+It means: You can not upgrade to the latest Lazarus version while the new version is not yet available in the Linux repository.
+So, if you want to upgrade Lazarus to the latest version, below links may helps a lot:
+* http://askubuntu.com/questions/364003/cant-correctly-install-lazarus
+* http://lazplanet.blogspot.com/2013/03/how-to-install-lazarus.html
 	
 ## Building new pascal project
 
