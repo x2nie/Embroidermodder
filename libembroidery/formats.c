@@ -17,13 +17,15 @@ int embFormat_count()
  *  Due we may insert a new format at anywhere in future,
  *  index must not be hardcoded to any relevan EmbFormat. */
 void embFormat_get(int index, EmbFormat* format){
+    format->readerName = NULL;
+    format->writerName = NULL;
     switch(index)
     {
     case 0:
         format->ext = ".10o";
         format->masterInfo = "Toyota Embroidery Format";
         format->readerName = "read10o";
-        format->writerName = "write10o";
+        /* format->writerName = "write10o"; */
         format->formatType = EMBFORMAT_STITCHONLY;
         break;
 /* TODO: list the rest formats alphabetically */

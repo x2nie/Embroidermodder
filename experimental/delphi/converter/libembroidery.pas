@@ -377,6 +377,31 @@ var
  embObjectList_free:   procedure (pointer: PEmbObjectList) cdecl  {$IFDEF WIN32} stdcall {$ENDIF};
 {$ENDIF}
 
+const
+  EMBFORMAT_STITCHONLY = 1;
+  EMBFORMAT_STCHANDOBJ = 3; {/* binary operation: 1+2=3*/}
+  EMBFORMAT_OBJECTONLY = 2;
+  //EMBFORMAT_COUNT = 59; {/* total supported format, distinctive version included*/}
+
+type
+  PEmbFormat = ^TEmbFormat;
+  TEmbFormat = record
+    ext: PChar;
+    // used for grouping all version, such OpenDialogBox: "Brother (*.pes)
+    masterInfo: PChar;
+    // used for specific version, such SaveDialogBox: Brother 001 (*.pes)| Brother 006 (*.pes)
+    detailInfo: PChar;
+    readerName: PChar;
+    writerName: PChar;
+    //int (*reader)(EmbPattern*, const char* );  TEmbReaderWriterProc
+    //int (*writer)(EmbPattern*, const char* );  TEmbReaderWriterProc
+    formatType: Integer;
+  end {EmbFormat_};
+
+var
+  embFormat_count: function: Integer cdecl  {$IFDEF WIN32} stdcall {$ENDIF};
+  embFormat_get: procedure(index: Integer;
+                           format: PEmbFormat) cdecl  {$IFDEF WIN32} stdcall {$ENDIF};
 
 var
   DLLLoaded: Boolean { is DLL (dynamically) loaded already? }
@@ -442,8 +467,9 @@ begin
     @embObjectList_count  := GetProcAddress(DLLHandle,'embObjectList_count');
     @embObjectList_empty  := GetProcAddress(DLLHandle,'embObjectList_empty');
     @embObjectList_free   := GetProcAddress(DLLHandle,'embObjectList_free');
-{$ENDIF}  
-
+{$ENDIF}
+    @embFormat_count   := GetProcAddress(DLLHandle,'embFormat_count');
+    @embFormat_get   := GetProcAddress(DLLHandle,'embFormat_get');
 
   end
   else
