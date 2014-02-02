@@ -7,6 +7,7 @@ QMAKE_CFLAGS += /Za #equivalent of -pedantic-errors
 !msvc {
 #Ensure anything that does not strictly adhere to C89 is treated as an error
 QMAKE_CFLAGS += -std=c89 -pedantic-errors
+QMAKE_CFLAGS += -fvisibility=hidden #Check exported symbols using: nm -C -D libembroidery.so | grep ' T '
 
 #Ensure all implicit function declarations are errors rather than warnings
 QMAKE_CFLAGS_WARN_ON += -Werror=implicit-function-declaration
@@ -120,6 +121,8 @@ SOURCES += \
 
 
 HEADERS += \
+../libembroidery/api-start.h \
+../libembroidery/api-stop.h \
 ../libembroidery/compound-file.h \
 ../libembroidery/compound-file-common.h \
 ../libembroidery/compound-file-difat.h \
