@@ -55,6 +55,7 @@ EmbFormatList* embFormatList_create() {
         embLog_error("formats.c embFormatList_create(), unable to allocate memory for formatList\n");
         return 0;
     }
+    formatList->formatCount = 0;
     formatList->firstFormat = NULL;
     formatList->lastFormat = NULL;
 
