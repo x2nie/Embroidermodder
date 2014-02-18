@@ -197,12 +197,27 @@ QWidget* Settings_Dialog::createTabGeneral()
     vboxLayoutTips->addWidget(checkBoxTipOfTheDay);
     groupBoxTips->setLayout(vboxLayoutTips);
 
+    //Help Browser
+    QGroupBox* groupBoxHelpBrowser = new QGroupBox(tr("Help Browser"), widget);
+
+    QRadioButton* radioButtonSystemHelpBrowser = new QRadioButton(tr("System"), groupBoxHelpBrowser);
+    radioButtonSystemHelpBrowser->setChecked(mainWin->getSettingsGeneralSystemHelpBrowser());
+    QRadioButton* radioButtonCustomHelpBrowser = new QRadioButton(tr("Custom"), groupBoxHelpBrowser);
+    radioButtonCustomHelpBrowser->setChecked(!mainWin->getSettingsGeneralSystemHelpBrowser());
+    radioButtonCustomHelpBrowser->setEnabled(false); //TODO: finish this
+
+    QVBoxLayout* vboxLayoutHelpBrowser = new QVBoxLayout(groupBoxHelpBrowser);
+    vboxLayoutHelpBrowser->addWidget(radioButtonSystemHelpBrowser);
+    vboxLayoutHelpBrowser->addWidget(radioButtonCustomHelpBrowser);
+    groupBoxHelpBrowser->setLayout(vboxLayoutHelpBrowser);
+
     //Widget Layout
     QVBoxLayout* vboxLayoutMain = new QVBoxLayout(widget);
     vboxLayoutMain->addWidget(groupBoxLanguage);
     vboxLayoutMain->addWidget(groupBoxIcon);
     vboxLayoutMain->addWidget(groupBoxMdiBG);
     vboxLayoutMain->addWidget(groupBoxTips);
+    vboxLayoutMain->addWidget(groupBoxHelpBrowser);
     vboxLayoutMain->addStretch(1);
     widget->setLayout(vboxLayoutMain);
 
@@ -283,9 +298,11 @@ QWidget* Settings_Dialog::createTabDisplay()
     QLabel* labelScrollBarWidget = new QLabel(tr("Perform action when clicking corner widget"), groupBoxScrollBars);
     QComboBox* comboBoxScrollBarWidget = new QComboBox(groupBoxScrollBars);
     dialog_display_scrollbar_widget_num = mainWin->getSettingsDisplayScrollBarWidgetNum();
-    foreach(QAction* action, mainWin->actionDict)
+    int numActions = mainWin->actionHash.size();
+    for(int i = 0; i < numActions; i++)
     {
-        comboBoxScrollBarWidget->addItem(action->icon(), action->text().replace("&", ""));
+        QAction* action = mainWin->actionHash.value(i);
+        if(action) comboBoxScrollBarWidget->addItem(action->icon(), action->text().replace("&", ""));
     }
     comboBoxScrollBarWidget->setCurrentIndex(dialog_display_scrollbar_widget_num);
     connect(comboBoxScrollBarWidget, SIGNAL(currentIndexChanged(int)), this, SLOT(comboBoxScrollBarWidgetCurrentIndexChanged(int)));
@@ -2794,6 +2811,7 @@ void Settings_Dialog::acceptChanges()
     mainWin->setSettingsGeneralMdiBGTexture(dialog_general_mdi_bg_texture);
     mainWin->setSettingsGeneralMdiBGColor(dialog_general_mdi_bg_color);
     mainWin->setSettingsGeneralTipOfTheDay(dialog_general_tip_of_the_day);
+    //TODO: mainWin->setSettingsGeneralSystemHelpBrowser(dialog_general_system_help_browser);
     mainWin->setSettingsDisplayUseOpenGL(dialog_display_use_opengl);
     mainWin->setSettingsDisplayRenderHintAA(dialog_display_renderhint_aa);
     mainWin->setSettingsDisplayRenderHintTextAA(dialog_display_renderhint_text_aa);

@@ -1,77 +1,21 @@
 #include "emb-reader-writer.h"
 #include "emb-logging.h"
-#include "formats.h"
+#include "emb-format.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
-static const int formatCount = 59;
-static const char* const formats[] = {
-".10o", "U", " ", " Toyota Embroidery Format                         ",
-".100", "U", " ", " Toyota Embroidery Format                         ",
-".art", " ", " ", " Bernina Embroidery Format                        ",
-".bmc", " ", " ", " Bitmap Cache Embroidery Format                   ",
-".bro", "U", " ", " Bits & Volts Embroidery Format                   ",
-".cnd", " ", " ", " Melco Embroidery Format                          ",
-".col", "U", "U", " Embroidery Thread Color Format                   ",
-".csd", "U", " ", " Singer Embroidery Format                         ",
-".csv", "U", "U", " Comma Separated Values                           ",
-".dat", "U", " ", " Barudan Embroidery Format                        ",
-".dem", " ", " ", " Melco Embroidery Format                          ",
-".dsb", "U", " ", " Barudan Embroidery Format                        ",
-".dst", "U", "U", " Tajima Embroidery Format                         ",
-".dsz", "U", " ", " ZSK USA Embroidery Format                        ",
-".dxf", " ", " ", " Drawing Exchange Format                          ",
-".edr", "U", "U", " Embird Embroidery Format                         ",
-".emd", "U", " ", " Elna Embroidery Format                           ",
-".exp", "U", "U", " Melco Embroidery Format                          ",
-".exy", "U", " ", " Eltac Embroidery Format                          ",
-".eys", " ", " ", " Sierra Expanded Embroidery Format                ",
-".fxy", "U", " ", " Fortron Embroidery Format                        ",
-".gnc", " ", " ", " Great Notions Embroidery Format                  ",
-".gt ", "U", " ", " Gold Thread Embroidery Format                    ",
-".hus", "U", "U", " Husqvarna Viking Embroidery Format               ",
-".inb", "U", " ", " Inbro Embroidery Format                          ",
-".inf", "U", "U", " Embroidery Color Format                          ",
-".jef", "U", "U", " Janome Embroidery Format                         ",
-".ksm", "U", "U", " Pfaff Embroidery Format                          ",
-".max", "U", " ", " Pfaff Embroidery Format                          ",
-".mit", "U", " ", " Mitsubishi Embroidery Format                     ",
-".new", "U", " ", " Ameco Embroidery Format                          ",
-".ofm", "U", " ", " Melco Embroidery Format                          ",
-".pcd", "U", "U", " Pfaff Embroidery Format                          ",
-".pcm", "U", " ", " Pfaff Embroidery Format                          ",
-".pcq", "U", "U", " Pfaff Embroidery Format                          ",
-".pcs", "U", "U", " Pfaff Embroidery Format                          ",
-".pec", "U", "U", " Brother Embroidery Format                        ",
-".pel", " ", " ", " Brother Embroidery Format                        ",
-".pem", " ", " ", " Brother Embroidery Format                        ",
-".pes", "U", "U", " Brother Embroidery Format                        ",
-".phb", "U", " ", " Brother Embroidery Format                        ",
-".phc", "U", " ", " Brother Embroidery Format                        ",
-".plt", "U", "U", " AutoCAD plot drawing                             ",
-".rgb", "U", "U", " RGB Embroidery Format                            ",
-".sew", "U", " ", " Janome Embroidery Format                         ",
-".shv", "U", " ", " Husqvarna Viking Embroidery Format               ",
-".sst", "U", " ", " Sunstar Embroidery Format                        ",
-".stx", "U", " ", " Data Stitch Embroidery Format                    ",
-".svg", "U", "U", " Scalable Vector Graphics                         ",
-".t09", "U", " ", " Pfaff Embroidery Format                          ",
-".tap", "U", " ", " Happy Embroidery Format                          ",
-".thr", "U", "U", " ThredWorks Embroidery Format                     ",
-".txt", " ", "U", " Text File                                        ",
-".u00", "U", " ", " Barudan Embroidery Format                        ",
-".u01", " ", " ", " Barudan Embroidery Format                        ",
-".vip", "U", " ", " Pfaff Embroidery Format                          ",
-".vp3", "U", " ", " Pfaff Embroidery Format                          ",
-".xxx", "U", "U", " Singer Embroidery Format                         ",
-".zsk", "U", " ", " ZSK USA Embroidery Format                        "
-};
-
 void usage(void)
 {
-    int i = 0;
-
+    EmbFormatList* formatList = 0;
+    EmbFormatList* curFormat = 0;
+    char* extension = 0;
+    char* description = 0;
+    char readerState;
+    char writerState;
+    int type;
+    int numReaders = 0;
+    int numWriters = 0;
     printf(" _____________________________________________________________________________ \n");
     printf("|          _   _ ___  ___ _____ ___  ___   __  _ ___  ___ ___   _ _           |\n");
     printf("|         | | | | _ \\| __|     | _ \\| _ \\ /  \\| |   \\| __| _ \\ | | |          |\n");
@@ -99,13 +43,30 @@ void usage(void)
     printf("| Format | Read  | Write | Description                                        |\n");
     printf("|________|_______|_______|____________________________________________________|\n");
     printf("|        |       |       |                                                    |\n");
-    for(i = 0; i < formatCount; i++)
+
+    formatList = embFormatList_create();
+    if(!formatList) { embLog_error("libembroidery-convert-main.c usage(), cannot allocate memory for formatList\n"); return; }
+    curFormat = formatList;
+    while(curFormat)
     {
-        printf("|  %s  |   %s   |   %s   | %s |\n", formats[i*4], formats[i*4+1], formats[i*4+2], formats[i*4+3]);
+        if(embFormat_info(curFormat->extension, &extension, &description, &readerState, &writerState, &type))
+        {
+            numReaders += readerState != ' '? 1 : 0;
+            numWriters += writerState != ' '? 1 : 0;
+            printf("|  %-4s  |   %c   |   %c   |  %-49s |\n", extension, readerState, writerState, description);
+        }
+        curFormat = curFormat->next;
     }
+    embFormatList_free(formatList);
+    formatList = 0;
+
+    printf("|        |       |       |                                                    |\n");
+    printf("|________|_______|_______|____________________________________________________|\n");
+    printf("|        |       |       |                                                    |\n");
+    printf("| Total: |  %3d  |  %3d  |                                                    |\n", numReaders, numWriters);
     printf("|________|_______|_______|____________________________________________________|\n");
     printf("|                                                                             |\n");
-    printf("|                   http://embroidermodder.sourceforge.net                    |\n");
+    printf("|                   http://embroidermodder.github.io                          |\n");
     printf("|_____________________________________________________________________________|\n");
     printf("\n");
 }

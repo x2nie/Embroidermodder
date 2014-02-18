@@ -9,6 +9,10 @@
 #include <ctype.h>
 #include <math.h>
 
+#ifdef ARDUINO
+#include "utility/ino-event.h"
+#endif
+
 /*! Returns a pointer to an EmbPattern. It is created on the heap. The caller is responsible for freeing the allocated memory with embPattern_free(). */
 EmbPattern* embPattern_create(void)
 {
@@ -53,7 +57,6 @@ EmbPattern* embPattern_create(void)
     p->lastX = 0.0;
     p->lastY = 0.0;
 
-    printf("__GNUC__:%d\n", __GNUC__);
     return p;
 }
 
@@ -184,7 +187,6 @@ void embPattern_copyStitchListToPolylines(EmbPattern* p)
 void embPattern_copyPolylinesToStitchList(EmbPattern* p)
 {
     EmbPolylineObjectList* polyList = 0;
-    EmbStitchList* currentList = 0;
     int firstObject = 1;
     /*int currentColor = polyList->polylineObj->color TODO: polyline color */
 
@@ -200,16 +202,11 @@ void embPattern_copyPolylinesToStitchList(EmbPattern* p)
         thread.description = 0;
         embPattern_addThread(p, thread);
 
-        /* TODO: The commented out code below is jacked up. We should check the previous color against this color
-                 and only if they do not match the thread should be trimmed. */
-        /*
         if(!firstObject)
         {
-            embPattern_addStitchRel(p, currentPointList->point.xx, currentPointList->point.yy, TRIM, 1);
+            embPattern_addStitchAbs(p, currentPointList->point.xx, currentPointList->point.yy, TRIM, 1);
             embPattern_addStitchRel(p, 0.0, 0.0, STOP, 1);
-            firstObject = 0;
         }
-        */
 
         embPattern_addStitchAbs(p, currentPointList->point.xx, currentPointList->point.yy, JUMP, 1);
         while(currentPointList)
@@ -217,7 +214,7 @@ void embPattern_copyPolylinesToStitchList(EmbPattern* p)
             embPattern_addStitchAbs(p, currentPointList->point.xx, currentPointList->point.yy, NORMAL, 1);
             currentPointList = currentPointList->next;
         }
-
+        firstObject = 0;
         polyList = polyList->next;
     }
     embPattern_addStitchRel(p, 0.0, 0.0, END, 1);
@@ -286,8 +283,11 @@ void embPattern_addStitchAbs(EmbPattern* p, double x, double y, int flags, int i
     s.yy = y;
     s.flags = flags;
     s.color = p->currentColorIndex;
+#ifdef ARDUINO
+    inoEvent_addStitchAbs(p, s.xx, s.yy, s.flags, s.color);
+#else /* ARDUINO */
     p->lastStitch = embStitchList_add(p->lastStitch, s);
-
+#endif /* ARDUINO */
     p->lastX = s.xx;
     p->lastY = s.yy;
 }

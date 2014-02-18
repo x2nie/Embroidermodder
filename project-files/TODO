@@ -8,6 +8,7 @@ WIP - Saving CSV/SVG (rt) + CSV read/write UNKNOWN interpreted as COLOR bug
 //====================
 //Stuff for 2.0 alpha2:
 //====================
+TODO - Notify user of data loss if not saving to an object format.
 TODO - Import Raster Image
 TODO - SNAP/ORTHO/POLAR
 TODO - Layer Manager + LayerSwitcher DockWidget
@@ -114,7 +115,8 @@ TODO - Reports?
 TODO - Record and Playback Commands
 TODO - Settings option for reversing zoom scrolling direction
 TODO - Qt GUI for libembroidery-convert
-TODO - EPS format?
+TODO - EPS format? Look at using Ghostscript as an optional add-on to libembroidery...
+TODO - optional compile option for including LGPL/GPL libs etc... with warning to user about license requirements.
 TODO - Realistic Visualization - Bump Mapping/OpenGL/Gradients?
 TODO - Stippling Fill
 TODO - User Designed Custom Fill
@@ -138,4 +140,5 @@ TODO - EmbroideryFLOSS - Color picker that displays catalog numbers and names.
 TODO - Fix emb-outline files
 TODO - Fix thread-color files
 TODO - Logging of Last Stitch Location to External USB Storage(commonly available and easily replaced) ...wait until TRE is available to avoid rework
+TODO - inotool.org - seems like the logical solution for Nightly/CI builds
 TODO - Smoothieboard experiments
