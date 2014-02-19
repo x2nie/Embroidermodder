@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include "helpers-misc.h"
 
 /**************************************************/
 /* EmbFormatList                                  */
@@ -321,6 +322,108 @@ int embFormat_type(const char* fileName)
     else { embLog_error("emb-format.c embFormat_type(), unsupported file type: %s\n", ending); }
 
     return EMBFORMAT_STITCHONLY;
+}
+
+/* len of accuracy of sorted description */
+#define EMBFORMAT_LENSORT 12
+
+EmbFormatList* embFormatList_createSorted() {
+    EmbFormatList* formatList = 0;
+    EmbFormatList* firstFormat = 0;
+
+
+    char descriptionList[100][EMBFORMAT_LENSORT];
+    int d = 0;
+    int i,id,j,k;
+    char c;
+    int bottom;
+
+    char* extension = 0;
+    char* description = 0;
+    char readerState;
+    char writerState;
+    int type;
+
+    /* create extensions */
+    formatList = embFormatList_create();
+    if(!formatList) { embLog_error("emb-format.c embFormatList_create(), cannot allocate memory for FormatList\n"); return 0; }
+
+
+    /* fill description */
+    firstFormat = formatList;
+    while(formatList)
+    {
+        if(embFormat_info(formatList->extension, &extension, &description, &readerState, &writerState, &type))
+        {
+            for(id=0;id<-3+EMBFORMAT_LENSORT-EMBFORMAT_MAXEXT;id++){
+                if(id<strlen(description))
+                    descriptionList[d][id] = description[id];
+                else
+                    descriptionList[d][id] = '-';
+            }
+            descriptionList[d][id++] = '`';
+            for(i=0;i<=EMBFORMAT_MAXEXT;i++)
+            {
+                if(i<strlen(extension))
+                    descriptionList[d][i+id] = extension[i];
+                else
+                    descriptionList[d][i+id] = 0;
+            }
+            descriptionList[d][id+i]=0;
+
+            /*printf("[%d] %s\n",d, descriptionList[d]);*/
+
+            d++;
+
+        }
+        formatList = formatList->next;
+    }
+    bottom = d-1;
+    /*printf("count: %d\n\n",bottom);*/
+
+    /*buble sort*/
+    /* for I := High(A) downto Low(A) do
+    for J := Low(A) to High(A) - 1 do
+
+    for(i=bottom; i>=0;i--) {
+        for(j=0;j<bottom;j++) {*/
+    /*if A[J] > A[J + 1] then*/
+    /*if(strcmp(descriptionList[j],descriptionList[j+1]) > 0)*/
+
+    /* selection sort */
+    /*for I := Low(A) to High(A) - 1 do
+      for J := High(A) downto I + 1 do */
+
+    for(i=0;i<=bottom-1;i++) {
+        for(j=bottom;j>=i+1;j--) {
+            /*if A[I] > A[J] then*/
+            if(strcmp(descriptionList[i],descriptionList[j]) > 0)
+            {
+              /*T := A[J];
+              A[J] := A[J + 1];
+              A[J + 1] := T;*/
+                for(k=0;k<EMBFORMAT_LENSORT;k++) {
+                    c = descriptionList[j][k];
+                    descriptionList[j][k] = descriptionList[i][k];
+                    descriptionList[i][k] = c;
+                }
+
+            }
+        }
+    }
+    formatList = firstFormat;
+
+    for(j=0;j<=bottom;j++) {
+        /*printf("%d ==> %s\n",j,descriptionList[j]);*/
+        formatList->extension = emb_strdup( strrchr(descriptionList[j],'`')+1);
+        /*printf("%d ~=> %s\n",j, formatList->extension);*/
+        formatList = formatList->next;
+    }
+
+    /*embFormatList_free(formatList);*/
+    return firstFormat;
+
+
 }
 
 /* kate: bom off; indent-mode cstyle; indent-width 4; replace-trailing-space-save on; */

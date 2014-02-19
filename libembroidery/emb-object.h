@@ -1,7 +1,7 @@
 #ifndef EMBOBJECT_H
 #define EMBOBJECT_H
 
-/* #define EMBOBJECTS_PREV */
+#define EMBOBJECTS_PREV
 
 #ifdef __cplusplus
 extern "C" {
@@ -24,16 +24,18 @@ extern "C" {
 #define QUADTOCONTROL    256
 #define QUADTOEND        512*/
 
+#define EMBOBJ_MOVE     'M'
+#define EMBOBJ_MOVEREL  'm'
+
 typedef struct EmbObjectList_ EmbObjectList_;
+
+/* One EmbObjectList is usually one shape (circle, rectangle, polyline, polygon)
+ * But it also may a partial of shape (line, arc, bezier, quadbezier, ...) */
 typedef struct EmbObject_
 {
     char kind;
 
     EmbPointList* pointList;
-    /* similar approach :
-    double* d;
-    int size_d;     */
-
 
     /* Properties */
     int lineType;
@@ -42,6 +44,7 @@ typedef struct EmbObject_
 
 EmbObject* embObject_create(char kind, EmbPointList* points, EmbColor color, int lineType);
 void embObject_free(EmbObject* pointer);
+
 
 typedef struct EmbObjectList_
 {

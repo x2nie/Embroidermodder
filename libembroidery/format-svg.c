@@ -392,9 +392,9 @@ void svgAddToPattern(EmbPattern* p)
                     {
                         pendingTask -= 1;
 
-                    /* Check wether prior command need to be saved */
-                    if(trip>=0)
-                    {
+                        /* Check wether prior command need to be saved */
+                        if(trip>=0)
+                        {
 
                             relative = 0; /* relative to prior coordinate point or absolute coordinate? */
 
@@ -482,42 +482,42 @@ void svgAddToPattern(EmbPattern* p)
                             trip = -1;
                             reset = -1;
 
-                    }
-
-                    /* assign new command */
-                    if(trip == -1 && reset == -1)
-                    {
-                        pathbuff[0] = (char)c;                  /* set the command for compare */
-                        pathbuff[1] = 0;
-
-                        printf("cmd:%s\n", pathbuff);
-                        if     (!strcmp(pathbuff, "M")) { cmd = 'M'; reset = 2; numMoves++; }
-                        else if(!strcmp(pathbuff, "m")) { cmd = 'm'; reset = 2; numMoves++; }
-                        else if(!strcmp(pathbuff, "L")) { cmd = 'L'; reset = 2; }
-                        else if(!strcmp(pathbuff, "l")) { cmd = 'l'; reset = 2; }
-                        else if(!strcmp(pathbuff, "C")) { cmd = 'C'; reset = 6; }
-                        else if(!strcmp(pathbuff, "c")) { cmd = 'c'; reset = 6; }
-                        else if(!strcmp(pathbuff, "H")) { cmd = 'H'; reset = 1; }
-                        else if(!strcmp(pathbuff, "h")) { cmd = 'h'; reset = 1; }
-                        else if(!strcmp(pathbuff, "V")) { cmd = 'V'; reset = 1; }
-                        else if(!strcmp(pathbuff, "v")) { cmd = 'v'; reset = 1; }
-                        else if(!strcmp(pathbuff, "S")) { cmd = 'S'; reset = 4; }
-                        else if(!strcmp(pathbuff, "s")) { cmd = 's'; reset = 4; }
-                        else if(!strcmp(pathbuff, "Q")) { cmd = 'Q'; reset = 4; }
-                        else if(!strcmp(pathbuff, "q")) { cmd = 'q'; reset = 4; }
-                        else if(!strcmp(pathbuff, "T")) { cmd = 'T'; reset = 2; }
-                        else if(!strcmp(pathbuff, "t")) { cmd = 't'; reset = 2; }
-                        else if(!strcmp(pathbuff, "A")) { cmd = 'A'; reset = 7; }
-                        else if(!strcmp(pathbuff, "a")) { cmd = 'a'; reset = 7; }
-                        else if(!strcmp(pathbuff, "Z")) { cmd = 'Z'; reset = 0; }
-                        else if(!strcmp(pathbuff, "z")) { cmd = 'z'; reset = 0; }
-                        else {
-                            embLog_error("format-svg.c svgAddToPattern(), %s is not a valid svg path command, skipping...\n", pathbuff);
-                            trip = -1;
-                            reset = -1;
                         }
-                    }
-                    /* avoid loosing 'z' command that maybe never accomodated. */
+
+                        /* assign new command */
+                        if(trip == -1 && reset == -1)
+                        {
+                            pathbuff[0] = (char)c;                  /* set the command for compare */
+                            pathbuff[1] = 0;
+
+                            printf("cmd:%s\n", pathbuff);
+                            if     (!strcmp(pathbuff, "M")) { cmd = 'M'; reset = 2; numMoves++; }
+                            else if(!strcmp(pathbuff, "m")) { cmd = 'm'; reset = 2; numMoves++; }
+                            else if(!strcmp(pathbuff, "L")) { cmd = 'L'; reset = 2; }
+                            else if(!strcmp(pathbuff, "l")) { cmd = 'l'; reset = 2; }
+                            else if(!strcmp(pathbuff, "C")) { cmd = 'C'; reset = 6; }
+                            else if(!strcmp(pathbuff, "c")) { cmd = 'c'; reset = 6; }
+                            else if(!strcmp(pathbuff, "H")) { cmd = 'H'; reset = 1; }
+                            else if(!strcmp(pathbuff, "h")) { cmd = 'h'; reset = 1; }
+                            else if(!strcmp(pathbuff, "V")) { cmd = 'V'; reset = 1; }
+                            else if(!strcmp(pathbuff, "v")) { cmd = 'v'; reset = 1; }
+                            else if(!strcmp(pathbuff, "S")) { cmd = 'S'; reset = 4; }
+                            else if(!strcmp(pathbuff, "s")) { cmd = 's'; reset = 4; }
+                            else if(!strcmp(pathbuff, "Q")) { cmd = 'Q'; reset = 4; }
+                            else if(!strcmp(pathbuff, "q")) { cmd = 'q'; reset = 4; }
+                            else if(!strcmp(pathbuff, "T")) { cmd = 'T'; reset = 2; }
+                            else if(!strcmp(pathbuff, "t")) { cmd = 't'; reset = 2; }
+                            else if(!strcmp(pathbuff, "A")) { cmd = 'A'; reset = 7; }
+                            else if(!strcmp(pathbuff, "a")) { cmd = 'a'; reset = 7; }
+                            else if(!strcmp(pathbuff, "Z")) { cmd = 'Z'; reset = 0; }
+                            else if(!strcmp(pathbuff, "z")) { cmd = 'z'; reset = 0; }
+                            else {
+                                embLog_error("format-svg.c svgAddToPattern(), %s is not a valid svg path command, skipping...\n", pathbuff);
+                                trip = -1;
+                                reset = -1;
+                            }
+                        }
+                        /* avoid loosing 'z' command that maybe never accomodated. */
                         if (i==last-1) {
                             trip = 2;
                         }
@@ -525,9 +525,6 @@ void svgAddToPattern(EmbPattern* p)
 
 
                     break;
-                /*default:
-                    //pathbuff[pos++] = (char)c;
-                    //break; */
             }
             if(pos >= size - 1)
             {
