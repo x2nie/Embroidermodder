@@ -6,7 +6,7 @@
 /* EmbObject                              */
 /**************************************************/
 
-EmbObject* embObject_create(char kind, EmbPointList* points, EmbColor color, int lineType)
+EmbObject* embObject_create(unsigned char kind, EmbPointList* points, EmbColor color, int lineType)
 {
     EmbObject* heapObjectObj = (EmbObject*)malloc(sizeof(EmbObject));
     if(!heapObjectObj) { embLog_error("emb-object.c embObject_create(), cannot allocate memory for heapObjectObj\n"); return 0; }

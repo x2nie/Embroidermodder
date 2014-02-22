@@ -33,7 +33,8 @@ typedef struct EmbObjectList_ EmbObjectList_;
  * But it also may a partial of shape (line, arc, bezier, quadbezier, ...) */
 typedef struct EmbObject_
 {
-    char kind;
+    unsigned char kind;
+    char unused;
 
     EmbPointList* pointList;
 
@@ -42,7 +43,7 @@ typedef struct EmbObject_
     EmbColor color;
 } EmbObject;
 
-EmbObject* embObject_create(char kind, EmbPointList* points, EmbColor color, int lineType);
+EmbObject* embObject_create(unsigned char kind, EmbPointList* points, EmbColor color, int lineType);
 void embObject_free(EmbObject* pointer);
 
 

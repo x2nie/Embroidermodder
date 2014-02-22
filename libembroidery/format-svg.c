@@ -330,9 +330,37 @@ void svgAddToPattern(EmbPattern* p)
         printf("stroke:%s\n", mystrok);
 
         /* M44.219,26.365c0,10.306-8.354,18.659-18.652,18.659c-10.299,0-18.663-8.354-18.663-18.659c0-10.305,8.354-18.659,18.659-18.659C35.867,7.707,44.219,16.06,44.219,26.365z */
+        /* M44.219,26.365
+            c0,10.306 -8.354,18.659  -18.652,18.659
+            c-10.299,0  -18.663 -8.354 -18.663 -18.659
+            c0 -10.305,  8.354 -18.659, 18.659 -18.659
+            C35.867,7.707  ,44.219,16.06, 44.219, 26.365 z */
+
+        /* M67.473,39.592
+            c-1.504-2.34-3.182 -4.455 -5.684-5.698
+            c-3.049-1.518  -4.367-2.051  -9.428-2.313
+            c-5.536,0-9.796,1.299-13.184,4.3c-3.389,3-6.038,7.775-5.996,12.371h11.816c0.024-2.042-0.315-3.709,1.176-5.003
+            c1.489-1.294,3.397-1.941,5.722-1.941c2.274,0,4.087,0.532,5.438,1.595c1.352,1.063,1.641,2.358,1.641,3.887
+            c0,1.122-0.278,2.102-0.831,2.938c-0.554,0.836-1.778,2.363-4.447,4.584c-2.771,2.294-4.384,3.647-5.616,6.262
+            c-1.234,2.614-1.52,3.688-1.852,6.888
+            l 0.013, 0.523
+            h 11.192
+            c 0.124-1.468,0.289-2.125,0.6-3.183c0.378-1.29-0.054-1.69,0.62-2.365
+            c0.939 -0.938,  1.797 -1.475    ,3.737 -2.893
+            c2.447 -1.789,      3.744 -3.391,   4.35 -4.227
+            c1.035 -1.432,      1.791 -2.83,    2.27 -4.19
+            c0.48 -1.36,  0.721 -2.746,   0.721 -4.156
+            C69.73, 44.392,   68.976,  41.933,   67.473, 39.592z*/
+        /* M67.473,39.592c-1.504-2.34-3.182-4.455-5.684-5.698c-3.049-1.518-4.367-2.051-9.428-2.313
+            c-5.536,0-9.796,1.299-13.184,4.3c-3.389,3-6.038,7.775-5.996,12.371h11.816c0.024-2.042-0.315-3.709,1.176-5.003
+            c1.489-1.294,3.397-1.941,5.722-1.941c2.274,0,4.087,0.532,5.438,1.595c1.352,1.063,1.641,2.358,1.641,3.887
+            c0,1.122-0.278,2.102-0.831,2.938c-0.554,0.836-1.778,2.363-4.447,4.584c-2.771,2.294-4.384,3.647-5.616,6.262
+            c-1.234,2.614-1.52,3.688-1.852,6.888l0.013,0.523h11.192c0.124-1.468,0.289-2.125,0.6-3.183c0.378-1.29-0.054-1.69,0.62-2.365
+            c0.939-0.938,1.797-1.475,3.737-2.893c2.447-1.789,3.744-3.391,4.35-4.227c1.035-1.432,1.791-2.83,2.27-4.19
+            c0.48-1.36,0.721-2.746,0.721-4.156C69.73,44.392,68.976,41.933,67.473,39.592z */
         for(i = 0; i < last; i++)
         {
-            char c = pointStr[i];
+            unsigned char c = pointStr[i];
             switch(c)
             {
                 case '0':
@@ -349,15 +377,20 @@ void svgAddToPattern(EmbPattern* p)
                     pathbuff[pos++] = (char)c;                  /* add a more char */
                     break;
 
+                case 7:
+                case 8:
+                case 9:
+                case 10:
+                case 13:
                 case ' ':
                 case ',':
 
                     /*printf("    ,'%s'    ~POS=%d  ~TRIP=%d  ~[pos]=%d\n", pathbuff,pos,trip, pathbuff[pos]);*/
                     if(pos > 0) {         /* append float to array, if it not yet stored */
                         pathbuff[pos] = 0;
-                        pos = 0;
                         printf("    ,val:%s\n", pathbuff);
                         pathData[++trip] = atof(pathbuff);
+                        pos = 0;
                     }
                     break;
 
@@ -365,9 +398,9 @@ void svgAddToPattern(EmbPattern* p)
 
                     if(pos > 0) {         /* append float to array, if it not yet stored */
                         pathbuff[pos] = 0;
-                        pos = 0;
                         printf("    -val:%s\n", pathbuff);
                         pathData[++trip] = atof(pathbuff);
+                        pos = 0;
                     }
                     pathbuff[pos++] = (char)c;                  /* add a more char */
                     break;
@@ -425,13 +458,20 @@ void svgAddToPattern(EmbPattern* p)
                             {
 
                                 rootPathShape = embObjectList_create(embObject_create('G', NULL,embColor_make(0,0,0),0));
-                                startOfPointList = embPointList_create(xx, yy);
+                                startOfPointList = embPointList_create(pathData[0], pathData[1]);
                                 pathObjPointList = startOfPointList;
 
-                                if (reset > 2)
-                                    pathObjPointList = embPointList_add(pathObjPointList, embPoint_make(cx1, cy1));
+                                /*if (reset > 2)
+                                    pathObjPointList = embPointList_addMem(pathObjPointList, embPoint_create(cx1, cy1));
                                 if (reset > 4)
-                                    pathObjPointList = embPointList_add(pathObjPointList, embPoint_make(cx2, cy2));
+                                    pathObjPointList = embPointList_addMem(pathObjPointList, embPoint_create(cx2, cy2));*/
+
+                                if (reset > 2)
+                                    pathObjPointList = embPointList_add(pathObjPointList, embPoint_make(pathData[2], pathData[3]));
+                                if (reset > 4)
+                                    pathObjPointList = embPointList_add(pathObjPointList, embPoint_make(pathData[4], pathData[5]));
+                                if (reset > 6)
+                                    pathObjPointList = embPointList_add(pathObjPointList, embPoint_make(pathData[6], pathData[7]));
 
                                 shapeObjList = embObjectList_create(embObject_create(cmd, startOfPointList,embColor_make(0,0,0),0));
                                 /*shapeObjList->shapeObj->pointList = startOfPointList;*/
@@ -440,13 +480,19 @@ void svgAddToPattern(EmbPattern* p)
                             }
                             else
                             {
-                                startOfPointList = embPointList_create(xx, yy);
+                                startOfPointList = embPointList_create(pathData[0], pathData[1]);
                                 pathObjPointList = startOfPointList;
 
-                                if (reset > 2)
-                                    pathObjPointList = embPointList_add(pathObjPointList, embPoint_make(cx1, cy1));
+                                /*if (reset > 2)
+                                    pathObjPointList = embPointList_addMem(pathObjPointList, embPoint_create(cx1, cy1));
                                 if (reset > 4)
-                                    pathObjPointList = embPointList_add(pathObjPointList, embPoint_make(cx2, cy2));
+                                    pathObjPointList = embPointList_addMem(pathObjPointList, embPoint_create(cx2, cy2));*/
+                                if (reset > 2)
+                                    pathObjPointList = embPointList_add(pathObjPointList, embPoint_make(pathData[2], pathData[3]));
+                                if (reset > 4)
+                                    pathObjPointList = embPointList_add(pathObjPointList, embPoint_make(pathData[4], pathData[5]));
+                                if (reset > 6)
+                                    pathObjPointList = embPointList_add(pathObjPointList, embPoint_make(pathData[6], pathData[7]));
 
                                 shapeObjList = embObjectList_add(shapeObjList, embObject_create(cmd, startOfPointList,embColor_make(0,0,0),0));
                                 /*shapeObjList->shapeObj->pointList = startOfPointList;*/
@@ -479,12 +525,17 @@ void svgAddToPattern(EmbPattern* p)
                                    pathData[5],
                                    pathData[6]
                                    );
-                            printf("EXITING SVG. sizeof(embPattern)= %d \n", (int)sizeof(EmbPattern));
+                            /*printf("EXITING SVG. sizeof(embPattern)= %d \n", (int)sizeof(EmbPattern));
                             printf("EXITING SVG. sizeof(EmbObject)= %d \n", (int)sizeof(EmbObject));
                             printf("EXITING SVG. sizeof(EmbObjectList)= %d \n", (int)sizeof(EmbObjectList));
-                            printf("EXITING SVG. sizeof(TEmbColor)= %d \n", (int)sizeof(EmbColor));
+                            printf("EXITING SVG. sizeof(TEmbColor)= %d \n", (int)sizeof(EmbColor));*/
                             trip = -1;
                             reset = -1;
+
+                            for(j=0;j<=7;j++)
+                            {
+                                pathData[j]=0.0;
+                            }
 
                         }
 

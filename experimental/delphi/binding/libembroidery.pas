@@ -23,8 +23,8 @@ uses
   {$ENDIF}
 {$ENDIF}  
 
-{.$DEFINE EMBOBJECT}
-{.$DEFINE EMBOBJECTS_PREV}
+{$DEFINE EMBOBJECT}
+{$DEFINE EMBOBJECTS_PREV}
 {$IFNDEF FPC}
   {$IFNDEF MSDOS}
     {$DEFINE SetErrorMode}
@@ -43,6 +43,8 @@ type
     xx: Double;   {= absolute position (not relative) }
     yy: Double;   {= positive is up, units are in mm }
   end {EmbPoint_};
+  PEmbPoint = ^TEmbPoint;
+
 
   PEmbPointList = ^TEmbPointList;
   TEmbPointList = record
@@ -50,7 +52,7 @@ type
     next: PEmbPointList;
   end {EmbPointList_};
 
-  TEmbPointObject = record
+  TEmbPointObject = packed record
     point: TEmbPoint;
 	  // Properties
     lineType: Integer;
@@ -299,7 +301,8 @@ type
 type
   PEmbObject = ^TEmbObject;
   TEmbObject = record
-    kind: Char;
+    kind: char;
+    unused: Byte;
     pointList: PEmbPointList;
 
     // Properties*/
@@ -394,6 +397,7 @@ var
 
 var
   embPattern_create:  function(): PEmbPattern cdecl  {$IFDEF WIN32} stdcall {$ENDIF};
+  embPattern_free:    procedure(pattern: PEmbPattern) cdecl  {$IFDEF WIN32} stdcall {$ENDIF};
   embPattern_read:    function(pattern: PEmbPattern;
             const fileName: PChar): Integer cdecl  {$IFDEF WIN32} stdcall {$ENDIF};
 
@@ -468,7 +472,7 @@ begin
     //I need to sure we are using correct lib, but this context doesn't work:
     //Assert(assigned(@embPattern_read));
   {$ENDIF}
-
+    @embPattern_free := GetProcAddress(DLLHandle,'embPattern_free');
     @embPattern_read := GetProcAddress(DLLHandle,'embPattern_read');
     @embPattern_write := GetProcAddress(DLLHandle,'embPattern_write');
     @embFormat_type := GetProcAddress(DLLHandle,'embFormat_type');
