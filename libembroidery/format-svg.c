@@ -479,6 +479,10 @@ void svgAddToPattern(EmbPattern* p)
                                    pathData[5],
                                    pathData[6]
                                    );
+                            printf("EXITING SVG. sizeof(embPattern)= %d \n", (int)sizeof(EmbPattern));
+                            printf("EXITING SVG. sizeof(EmbObject)= %d \n", (int)sizeof(EmbObject));
+                            printf("EXITING SVG. sizeof(EmbObjectList)= %d \n", (int)sizeof(EmbObjectList));
+                            printf("EXITING SVG. sizeof(TEmbColor)= %d \n", (int)sizeof(EmbColor));
                             trip = -1;
                             reset = -1;
 

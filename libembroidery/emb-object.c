@@ -39,6 +39,7 @@ EmbObjectList* embObjectList_create(EmbObject* data)
     heapObjectObjList->prev = 0;
 #endif
     heapObjectObjList->next = 0;
+    heapObjectObjList->child = 0;
     return heapObjectObjList;
 }
 
@@ -55,6 +56,7 @@ EmbObjectList* embObjectList_add(EmbObjectList* pointer, EmbObject* data)
 #endif
     incoming->objectObj = data;
     incoming->next = 0;
+    incoming->child = 0;
     return incoming;
 }
 
