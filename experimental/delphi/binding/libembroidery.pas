@@ -387,19 +387,20 @@ const
 var
   embFormatList_create: function:  PEmbFormatList cdecl  {$IFDEF WIN32} stdcall {$ENDIF};
   embFormatList_free: procedure(formatList: PEmbFormatList) cdecl  {$IFDEF WIN32} stdcall {$ENDIF};
-  embFormat_info: function(const fileName: PChar; 
-                           var extension: PChar; 
-                           var description: PChar; 
+  embFormat_info: function(const fileName: PChar;
+                           var extension: PChar;
+                           var description: PChar;
                            var reader: Char;
-                           var writer: Char; 
+                           var writer: Char;
                            var formatType: Integer): integer cdecl  {$IFDEF WIN32} stdcall {$ENDIF};
 
-
 var
-  embPattern_create:  function(): PEmbPattern cdecl  {$IFDEF WIN32} stdcall {$ENDIF};
+  embPointList_count: function(points: PEmbPointList): integer cdecl  {$IFDEF WIN32} stdcall {$ENDIF};
+var
+  embPattern_create:  function(): PEmbPattern  cdecl  {$IFDEF WIN32} stdcall {$ENDIF};
   embPattern_free:    procedure(pattern: PEmbPattern) cdecl  {$IFDEF WIN32} stdcall {$ENDIF};
   embPattern_read:    function(pattern: PEmbPattern;
-            const fileName: PChar): Integer cdecl  {$IFDEF WIN32} stdcall {$ENDIF};
+            const fileName: PChar): Integer  cdecl  {$IFDEF WIN32} stdcall {$ENDIF};
 
   embPattern_write:   function(const pattern: PEmbPattern;
              const fileName: PChar): Integer cdecl  {$IFDEF WIN32} stdcall {$ENDIF};
@@ -441,6 +442,7 @@ implementation
 
 uses
   SysUtils;
+
 var
   SaveExit: pointer;
   DLLHandle: THandle;
@@ -476,6 +478,9 @@ begin
     @embPattern_read := GetProcAddress(DLLHandle,'embPattern_read');
     @embPattern_write := GetProcAddress(DLLHandle,'embPattern_write');
     @embFormat_type := GetProcAddress(DLLHandle,'embFormat_type');
+
+
+    @embPointList_count := GetProcAddress(DLLHandle,'embPointList_count');
 
 {$IFDEF EMBOBJECT}
     @embObject_create   := GetProcAddress(DLLHandle,'embObject_create');

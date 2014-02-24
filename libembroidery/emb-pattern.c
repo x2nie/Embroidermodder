@@ -892,6 +892,8 @@ void embPattern_free(EmbPattern* p)
     embStitchList_free(p->stitchList);              p->stitchList = 0;      p->lastStitch = 0;
     embThreadList_free(p->threadList);              p->threadList = 0;      p->lastThread = 0;
 
+    embObjectList_free(p->objectObjList);               p->objectObjList =0;    p->lastObjectObj = 0;
+
     embArcObjectList_free(p->arcObjList);           p->arcObjList = 0;      p->lastArcObj = 0;
     embCircleObjectList_free(p->circleObjList);     p->circleObjList = 0;   p->lastCircleObj = 0;
     embEllipseObjectList_free(p->ellipseObjList);   p->ellipseObjList = 0;  p->lastEllipseObj = 0;
